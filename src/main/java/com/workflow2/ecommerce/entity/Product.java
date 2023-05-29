@@ -31,7 +31,7 @@ public class Product {
     private double price;
 
     @Column(name = "product_color")
-    private String color;
+    private String[] color;
 
     @Column(name = "product_size")
     private String size;
@@ -39,4 +39,13 @@ public class Product {
     @Column(name = "product_image", unique = false, nullable = true, length = 16777215)
     private byte[] image = null;
 
+    
+    @Column(name="product_description")
+    private String description;
+
+    @Column(name="product_totalStock")
+    private int totalStock;
+
+    @Column(name="product_subcategory")
+    private String subcategory;
 }

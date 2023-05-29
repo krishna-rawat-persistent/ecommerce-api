@@ -40,9 +40,12 @@ public class ProductController {
                     .brand(product.getBrand())
                     .category(product.getCategory())
                     .price(product.getPrice())
+                    .description(product.getDescription())
+                    .totalStock(product.getTotalStock())
                     .image(ImageUtility.compressImage(file.getBytes()))
                     .size(product.getSize())
                     .color(product.getColor())
+                    .subcategory(product.getSubcategory())
                     .build();
             prod = productService.saveProduct(product1);
         }catch (IOException e){
@@ -80,6 +83,9 @@ public class ProductController {
                         .image(ImageUtility.compressImage(file.getBytes()))
                         .color(product.getColor())
                         .size(product.getSize())
+                        .description(product.getDescription())
+                        .totalStock(product.getTotalStock())
+                        .subcategory(product.getSubcategory())
                         .build();
                 prod = productService.updateProduct(product1, id);
             }else{
@@ -91,6 +97,9 @@ public class ProductController {
                         .image(ImageUtility.compressImage(product.getImage()))
                         .color(product.getColor())
                         .size(product.getSize())
+                        .description(product.getDescription())
+                        .totalStock(product.getTotalStock())
+                        .subcategory(product.getSubcategory())
                         .build();
                 prod = productService.updateProduct(product1, id);
             }

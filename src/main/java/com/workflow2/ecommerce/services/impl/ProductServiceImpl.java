@@ -7,6 +7,7 @@ import com.workflow2.ecommerce.repository.ProductRepo;
 import com.workflow2.ecommerce.services.ProductService;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class ProductServiceImpl implements ProductService {
                 .color(product.getColor())
                 .size(product.getSize())
                 .price(product.getPrice())
+                .description(product.getDescription())
+                .totalStock(product.getTotalStock())
+                .subcategory(product.getSubcategory())
                 .image(ImageUtility.decompressImage(product.getImage()))
                 .build();
     }
@@ -44,7 +48,11 @@ public class ProductServiceImpl implements ProductService {
                 .image(ImageUtility.decompressImage(prod.get().getImage()))
                 .price(prod.get().getPrice())
                 .size(prod.get().getSize())
-                .color(prod.get().getColor()).build();
+                .color(prod.get().getColor())
+                .description(prod.get().getDescription())
+                .totalStock(prod.get().getTotalStock())
+                .subcategory(prod.get().getSubcategory())
+                .build();
     }
 
     @Override
@@ -62,6 +70,9 @@ public class ProductServiceImpl implements ProductService {
                     .size(p.getSize())
                     .color(p.getColor())
                     .price(p.getPrice())
+                    .description(p.getDescription())
+                    .totalStock(p.getTotalStock())
+                    .subcategory(p.getSubcategory())
                     .build();
             decompressProds.add(prod);
         }
@@ -84,6 +95,9 @@ public class ProductServiceImpl implements ProductService {
                     .size(product.getSize())
                     .price(product.getPrice())
                     .image(product.getImage())
+                    .description(product.getDescription())
+                .totalStock(product.getTotalStock())
+                .subcategory(product.getSubcategory())
                     .build();
         }
         return null;
