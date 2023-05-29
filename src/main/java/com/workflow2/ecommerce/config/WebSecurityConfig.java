@@ -10,6 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 @Configuration
+/**
+ * This class contains
+ */
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override

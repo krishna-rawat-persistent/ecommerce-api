@@ -15,19 +15,14 @@ import java.util.Calendar;
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("api/product")
 @CrossOrigin()
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/")
-    public String welcomeMSG(){
-        return "Welcome to Product API of ecommerce App";
-    }
-
-    @PostMapping(value = "/save")
+    @PostMapping(value = "/")
     public ProductDTO saveProduct(@RequestPart("product") Product product, @RequestPart("image") MultipartFile file) {
         ProductDTO prod = null;
         try{
@@ -57,22 +52,22 @@ public class ProductController {
         return prod;
     }
 
-    @GetMapping("/fetch/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") String productId){
         return ResponseEntity.ok().body(productService.getProduct(productId));
     }
 
-    @GetMapping("/fetch/image/{id}")
+    @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getImageById(@PathVariable("id") String productId){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(productService.getProduct(productId).getImage());
     }
 
-    @GetMapping("/fetch")
+    @GetMapping("/")
     public ResponseEntity<List<ProductDTO>> getAllProduct(){
         return ResponseEntity.ok().body(productService.getAllProducts());
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") String id, @RequestPart("product") Product product, @RequestPart("image") MultipartFile file){
         ProductDTO prod = null;
         try{
@@ -106,7 +101,7 @@ public class ProductController {
         return ResponseEntity.ok().body(prod);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public String deleteProductById(@PathVariable("id") String id){
         try {
             productService.deleteProduct(id);
@@ -116,7 +111,7 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/")
     public String deleteAllProduct(){
         try {
             productService.deleteAllProducts();
