@@ -13,5 +13,7 @@ public class Response {
     private String message;
     private Boolean status;
     private String email;
+    private String jwtToken;
+
 
 }

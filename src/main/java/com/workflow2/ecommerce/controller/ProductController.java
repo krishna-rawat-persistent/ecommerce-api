@@ -5,9 +5,12 @@ import com.workflow2.ecommerce.model.ProductDTO;
 import com.workflow2.ecommerce.services.ProductService;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +27,7 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping(value = "/")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<ProductDTO> saveProduct(@RequestPart("product") Product product, @RequestPart("image") MultipartFile file) {
         try {
             Calendar calendar = Calendar.getInstance();
@@ -55,25 +59,29 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('User','Admin')")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") String productId){
         return productService.getProduct(productId);
     }
 
     @GetMapping("/image/{id}")
+    @PreAuthorize("hasAnyRole('User','Admin')")
     public ResponseEntity<byte[]> getImageById(@PathVariable("id") String productId){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(productService.getProduct(productId).getBody().getImage());
     }
 
     @GetMapping("/")
+    @PreAuthorize("hasAnyRole('User','Admin')")
     public ResponseEntity<List<ProductDTO>> getAllProduct(){
         return productService.getAllProducts();
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") String id, @RequestPart("product") Product product, @RequestPart("image") MultipartFile file){
         ProductDTO prod = null;
-        try {
-            if (product.getImage() == null) {
+        try{
+            if(product.getImage()==null) {
                 Product product1 = Product.builder()
                         .name(product.getName())
                         .brand(product.getBrand())
@@ -108,11 +116,13 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity deleteProductById(@PathVariable("id") String id){
             return productService.deleteProduct(id);
     }
 
     @DeleteMapping("/")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity deleteAllProduct(){
             return productService.deleteAllProducts();
     }

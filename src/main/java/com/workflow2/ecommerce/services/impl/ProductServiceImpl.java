@@ -4,7 +4,6 @@ package com.workflow2.ecommerce.services.impl;
 import com.workflow2.ecommerce.entity.Product;
 import com.workflow2.ecommerce.model.ProductDTO;
 import com.workflow2.ecommerce.repository.ProductRepo;
-import com.workflow2.ecommerce.response.Response;
 import com.workflow2.ecommerce.services.ProductService;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,10 +145,9 @@ public class ProductServiceImpl implements ProductService {
         try {
             repository.deleteAll();
             return ResponseEntity.status(HttpStatus.OK).body("All products Deleted Successfully");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to delete there is some error");
         }
     }
-
 }
 

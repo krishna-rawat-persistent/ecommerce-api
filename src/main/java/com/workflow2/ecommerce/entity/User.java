@@ -29,7 +29,7 @@ public class User {
     private String phoneNo;
 
     @Column(name="user_role")
-    private String role="user";
+    private String role;
 
     @Column(name = "password")
     private String password;

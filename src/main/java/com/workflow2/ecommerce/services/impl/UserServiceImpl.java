@@ -7,6 +7,7 @@ import com.workflow2.ecommerce.repository.UserRepo;
 import com.workflow2.ecommerce.response.Response;
 import com.workflow2.ecommerce.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,13 +60,12 @@ public class UserServiceImpl implements UserService {
                 String month = String.valueOf(calendar.get(Calendar.MONTH));
                 String hrs = String.valueOf(calendar.get(calendar.HOUR));
                 String min = String.valueOf(calendar.get(Calendar.MINUTE));
-
                 String userId = register.getName().substring(0,3)+register.getEmail().substring(0,2)+day+month+hrs+min;
                 repo.save(User.builder().id(userId)
                         .email(register.getEmail())
                         .name(register.getName())
                         .phoneNo(register.getPhoneNo())
-                        .role(register.getRole())
+                        .role("User")
                         .password(passwordEncoder.encode(register.getPassword()))
                         .build());
             } catch (Exception e) {
@@ -75,5 +75,6 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Response.builder().email(register.getEmail()).message("Email Already Exist !!").status(false).build());
         }
         return ResponseEntity.status(HttpStatus.OK).body(Response.builder().email(register.getEmail()).message("User Registered Successfully !!").status(true).build());
+
     }
 }
