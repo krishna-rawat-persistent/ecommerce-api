@@ -7,6 +7,8 @@ import com.workflow2.ecommerce.repository.UserRepo;
 import com.workflow2.ecommerce.response.Response;
 import com.workflow2.ecommerce.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Response login(Login login) {
+    public ResponseEntity<Response> login(Login login) {
         User user = repo.findByEmail(login.getEmail());
         if(user!=null){
             String plaintextPassword = login.getPassword();
@@ -33,23 +35,23 @@ public class UserServiceImpl implements UserService {
             if(passwordMatched){
                 Optional<User> validUser = repo.findOneByEmailAndPassword(login.getEmail(),encryptedPassword);
                 if(validUser.isPresent()){
-                    return Response.builder().status(true).message("Login Successful !!").email(login.getEmail()).build();
+                    return ResponseEntity.ok().body(Response.builder().status(true).message("Login Successful !!").email(login.getEmail()).build());
                 }else{
-                    return Response.builder().status(true).message("Invalid Credentials !!").build();
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.builder().status(true).message("Invalid Credentials !!").build());
                 }
             }else {
-                return Response.builder().status(false).message("Credentials not Matching!!").build();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.builder().status(false).message("Credentials not Matching!!").build());
             }
         }
-        return Response.builder().status(false).message("Email Not Exist !!").build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response.builder().status(false).message("Email Not Exist !!").build());
     }
 
     @Override
-    public Response register(Register register) {
+    public ResponseEntity<Response> register(Register register) {
         User user = repo.findByEmail(register.getEmail());
         if(user==null) {
             if (register.getName().equals("") || register.getEmail().equals("") || register.getPassword().equals("")) {
-                return Response.builder().message("Please fill all the values").status(false).build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Response.builder().message("Please fill all the values").status(false).build());
             }
             try {
                 Calendar calendar = Calendar.getInstance();
@@ -67,11 +69,11 @@ public class UserServiceImpl implements UserService {
                         .password(passwordEncoder.encode(register.getPassword()))
                         .build());
             } catch (Exception e) {
-                return Response.builder().message("Some exception occurred").status(false).build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Response.builder().message("Some exception occurred").status(false).build());
             }
         }else{
-            return Response.builder().email(register.getEmail()).message("Email Already Exist !!").status(false).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Response.builder().email(register.getEmail()).message("Email Already Exist !!").status(false).build());
         }
-        return Response.builder().email(register.getEmail()).message("User Registered Successfully !!").status(true).build();
+        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().email(register.getEmail()).message("User Registered Successfully !!").status(true).build());
     }
 }

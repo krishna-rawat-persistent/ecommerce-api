@@ -4,10 +4,12 @@ package com.workflow2.ecommerce.services.impl;
 import com.workflow2.ecommerce.entity.Product;
 import com.workflow2.ecommerce.model.ProductDTO;
 import com.workflow2.ecommerce.repository.ProductRepo;
+import com.workflow2.ecommerce.response.Response;
 import com.workflow2.ecommerce.services.ProductService;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,72 +23,13 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepo repository;
 
     @Override
-    public ProductDTO saveProduct(Product product) {
-        product = repository.save(product);
-        return ProductDTO.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .brand(product.getBrand())
-                .category(product.getCategory())
-                .color(product.getColor())
-                .size(product.getSize())
-                .price(product.getPrice())
-                .description(product.getDescription())
-                .totalStock(product.getTotalStock())
-                .subcategory(product.getSubcategory())
-                .image(ImageUtility.decompressImage(product.getImage()))
-                .build();
-    }
-
-    @Override
-    public ProductDTO getProduct(String productId) {
-        final Optional<Product> prod = Optional.of(repository.getReferenceById(productId));
-        return ProductDTO.builder().id(prod.get().getId())
-                .name(prod.get().getName())
-                .category(prod.get().getCategory())
-                .brand(prod.get().getBrand())
-                .image(ImageUtility.decompressImage(prod.get().getImage()))
-                .price(prod.get().getPrice())
-                .size(prod.get().getSize())
-                .color(prod.get().getColor())
-                .description(prod.get().getDescription())
-                .totalStock(prod.get().getTotalStock())
-                .subcategory(prod.get().getSubcategory())
-                .build();
-    }
-
-    @Override
-    public List<ProductDTO> getAllProducts() {
-        List<Product> prods =  repository.findAll();
-        List<ProductDTO> decompressProds = new ArrayList<>();
-        for(Product p: prods){
-            p.setImage(ImageUtility.decompressImage(p.getImage()));
-            ProductDTO prod = ProductDTO.builder()
-                    .id(p.getId())
-                    .name(p.getName())
-                    .category(p.getCategory())
-                    .brand(p.getBrand())
-                    .image(p.getImage())
-                    .size(p.getSize())
-                    .color(p.getColor())
-                    .price(p.getPrice())
-                    .description(p.getDescription())
-                    .totalStock(p.getTotalStock())
-                    .subcategory(p.getSubcategory())
-                    .build();
-            decompressProds.add(prod);
-        }
-       return decompressProds;
-    }
-
-    @Override
-    public ProductDTO updateProduct(Product product, String productId) {
-        final Optional<Product> prod = Optional.of(repository.getReferenceById(productId));
-        if(prod!=null){
-            product.setId(prod.get().getId());
-            repository.save(product);
-            product.setImage(ImageUtility.decompressImage(prod.get().getImage()));
-            return ProductDTO.builder()
+    public ResponseEntity<ProductDTO> saveProduct(Product product) {
+        try {
+            product = repository.save(product);
+            if(product==null){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(ProductDTO.builder()
                     .id(product.getId())
                     .name(product.getName())
                     .brand(product.getBrand())
@@ -94,24 +37,118 @@ public class ProductServiceImpl implements ProductService {
                     .color(product.getColor())
                     .size(product.getSize())
                     .price(product.getPrice())
-                    .image(product.getImage())
                     .description(product.getDescription())
-                .totalStock(product.getTotalStock())
-                .subcategory(product.getSubcategory())
-                    .build();
+                    .totalStock(product.getTotalStock())
+                    .subcategory(product.getSubcategory())
+                    .image(ImageUtility.decompressImage(product.getImage()))
+                    .build());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-        return null;
     }
 
     @Override
-    public void deleteProduct(String productId) {
-        repository.deleteById(productId);
-
+    public ResponseEntity<ProductDTO> getProduct(String productId) {
+        try {
+            final Optional<Product> prod = Optional.of(repository.getReferenceById(productId));
+            if (prod==null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(ProductDTO.builder().id(prod.get().getId())
+                    .name(prod.get().getName())
+                    .category(prod.get().getCategory())
+                    .brand(prod.get().getBrand())
+                    .image(ImageUtility.decompressImage(prod.get().getImage()))
+                    .price(prod.get().getPrice())
+                    .size(prod.get().getSize())
+                    .color(prod.get().getColor())
+                    .description(prod.get().getDescription())
+                    .totalStock(prod.get().getTotalStock())
+                    .subcategory(prod.get().getSubcategory())
+                    .build());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
 
     @Override
-    public void deleteAllProducts() {
-        repository.deleteAll();
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        try {
+            List<Product> prods = repository.findAll();
+            if (prods == null) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            }
+            List<ProductDTO> decompressProds = new ArrayList<>();
+            for (Product p : prods) {
+                p.setImage(ImageUtility.decompressImage(p.getImage()));
+                ProductDTO prod = ProductDTO.builder()
+                        .id(p.getId())
+                        .name(p.getName())
+                        .category(p.getCategory())
+                        .brand(p.getBrand())
+                        .image(p.getImage())
+                        .size(p.getSize())
+                        .color(p.getColor())
+                        .price(p.getPrice())
+                        .description(p.getDescription())
+                        .totalStock(p.getTotalStock())
+                        .subcategory(p.getSubcategory())
+                        .build();
+                decompressProds.add(prod);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(decompressProds);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ProductDTO> updateProduct(Product product, String productId) {
+        try {
+            final Optional<Product> prod = Optional.of(repository.getReferenceById(productId));
+            if (prod != null) {
+                product.setId(prod.get().getId());
+                repository.save(product);
+                product.setImage(ImageUtility.decompressImage(prod.get().getImage()));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(ProductDTO.builder()
+                        .id(product.getId())
+                        .name(product.getName())
+                        .brand(product.getBrand())
+                        .category(product.getCategory())
+                        .color(product.getColor())
+                        .size(product.getSize())
+                        .price(product.getPrice())
+                        .image(product.getImage())
+                        .description(product.getDescription())
+                        .totalStock(product.getTotalStock())
+                        .subcategory(product.getSubcategory())
+                        .build());
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity deleteProduct(String productId) {
+        try {
+            repository.deleteById(productId);
+            return ResponseEntity.status(HttpStatus.OK).body("Deleted Successfully");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to delete there is some error");
+        }
+    }
+
+    @Override
+    public ResponseEntity deleteAllProducts() {
+        try {
+            repository.deleteAll();
+            return ResponseEntity.status(HttpStatus.OK).body("All products Deleted Successfully");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to delete there is some error");
+        }
     }
 
 }

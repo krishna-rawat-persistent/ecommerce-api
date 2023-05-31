@@ -5,6 +5,7 @@ import com.workflow2.ecommerce.model.Register;
 import com.workflow2.ecommerce.response.Response;
 import com.workflow2.ecommerce.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,12 +18,12 @@ public class LoginController {
 
 
     @PostMapping("/register")
-    public Response register(@RequestBody Register register){
+    public ResponseEntity<Response> register(@RequestBody Register register){
         return service.register(register);
     }
 
     @PostMapping("/login")
-    public Response login(@RequestBody Login login){
+    public ResponseEntity<Response> login(@RequestBody Login login){
         return service.login(login);
     }
 
