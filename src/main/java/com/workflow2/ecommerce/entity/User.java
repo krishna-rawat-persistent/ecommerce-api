@@ -28,6 +28,11 @@ public class User {
     @Column(name="user_phone_no")
     private String phoneNo;
 
+    @Column(name="cart_id")
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="fk_cartId")
+    private Cart cart;
+
     @Column(name="user_role")
     private String role="user";
 
