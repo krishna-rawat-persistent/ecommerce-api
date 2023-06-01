@@ -1,4 +1,4 @@
-package com.workflow2.ecommerce.services;
+package com.workflow2.ecommerce.services.impl;
 
 
 import com.workflow2.ecommerce.entity.User;

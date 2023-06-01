@@ -13,11 +13,12 @@ import springfox.documentation.spring.web.plugins.Docket;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
 /**
  * This class is used to configure swagger UI and api specifications
  * @author krishna_rawat
+ * @version v0.0.1
  */
+@Configuration
 public class SwaggerConfig {
 
     /**
@@ -47,11 +48,11 @@ public class SwaggerConfig {
         return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
     }
 
-    @Bean
     /**
      * this bean return basic api specification
      * @return Docket class which help us to define open api specification
      */
+    @Bean
     public Docket api(){
         return new Docket(DocumentationType.OAS_30)
                 .apiInfo(getInfo())

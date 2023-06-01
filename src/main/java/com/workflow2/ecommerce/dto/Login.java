@@ -1,14 +1,16 @@
-package com.workflow2.ecommerce.entity;
+package com.workflow2.ecommerce.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthRequest {
+@Builder
+public class Login {
 
-    private String userName;
+    private String email;
     private String password;
 }

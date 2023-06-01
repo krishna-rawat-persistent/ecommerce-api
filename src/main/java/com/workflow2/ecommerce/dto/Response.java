@@ -1,4 +1,4 @@
-package com.workflow2.ecommerce.response;
+package com.workflow2.ecommerce.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.workflow2.ecommerce.model;
+package com.workflow2.ecommerce.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Login {
+public class Register {
 
+    private String name;
     private String email;
+    private String phoneNo;
+    private String role;
     private String password;
 }

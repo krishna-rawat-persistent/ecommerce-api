@@ -1,7 +1,7 @@
 package com.workflow2.ecommerce.filter;
 
 
-import com.workflow2.ecommerce.services.CustomUserDetailsService;
+import com.workflow2.ecommerce.services.impl.CustomUserDetailsService;
 import com.workflow2.ecommerce.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,11 +1,9 @@
 package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.entity.Product;
-import com.workflow2.ecommerce.model.ProductDTO;
+import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.services.ProductService;
 import com.workflow2.ecommerce.util.ImageUtility;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -17,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/product")
@@ -34,16 +32,8 @@ public class ProductController {
             @RequestPart("product") Product product,
             @RequestPart("image") MultipartFile file) {
         try {
-            Calendar calendar = Calendar.getInstance();
-            String day = String.valueOf(calendar.get(Calendar.DATE));
-            String month = String.valueOf(calendar.get(Calendar.MONTH));
-            String hrs = String.valueOf(calendar.get(calendar.HOUR));
-            String min = String.valueOf(calendar.get(Calendar.MINUTE));
-
-            String prodId = product.getCategory().substring(0, 3) + product.getName().substring(0, 2) + day + month + hrs + min;
-
             Product product1 = Product.builder()
-                    .id(prodId)
+                    .id(UUID.randomUUID())
                     .name(product.getName())
                     .brand(product.getBrand())
                     .category(product.getCategory())
@@ -53,7 +43,7 @@ public class ProductController {
                     .image(ImageUtility.compressImage(file.getBytes()))
                     .size(product.getSize())
                     .color(product.getColor())
-                    .subcategory(product.getSubcategory())
+                    .ratings(product.getRatings())
                     .build();
 
             return productService.saveProduct(product1);
@@ -64,13 +54,13 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('User','Admin')")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") String productId){
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") UUID productId){
         return productService.getProduct(productId);
     }
 
     @GetMapping("/image/{id}")
     @PreAuthorize("hasAnyRole('User','Admin')")
-    public ResponseEntity<byte[]> getImageById(@PathVariable("id") String productId){
+    public ResponseEntity<byte[]> getImageById(@PathVariable("id") UUID productId){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(productService.getProduct(productId).getBody().getImage());
     }
 
@@ -82,7 +72,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") String id, @RequestPart("product") Product product, @RequestPart("image") MultipartFile file){
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") UUID id, @RequestPart("product") Product product, @RequestPart("image") MultipartFile file){
         ProductDTO prod = null;
         try{
             if(product.getImage()==null) {
@@ -96,7 +86,7 @@ public class ProductController {
                         .size(product.getSize())
                         .description(product.getDescription())
                         .totalStock(product.getTotalStock())
-                        .subcategory(product.getSubcategory())
+                        .ratings(product.getRatings())
                         .build();
                 return productService.updateProduct(product1, id);
             } else {
@@ -110,7 +100,7 @@ public class ProductController {
                         .size(product.getSize())
                         .description(product.getDescription())
                         .totalStock(product.getTotalStock())
-                        .subcategory(product.getSubcategory())
+                        .ratings(product.getRatings())
                         .build();
                 return productService.updateProduct(product1, id);
             }
@@ -121,7 +111,7 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity deleteProductById(@PathVariable("id") String id){
+    public ResponseEntity deleteProductById(@PathVariable("id") UUID id){
             return productService.deleteProduct(id);
     }
 
@@ -130,4 +120,12 @@ public class ProductController {
     public ResponseEntity deleteAllProduct(){
             return productService.deleteAllProducts();
     }
+
+    @GetMapping("/category/{category}")
+    @PreAuthorize("hasAnyRole('User','Admin')")
+    public ResponseEntity<List<ProductDTO>> getAllProductByCategory(@PathVariable("category") String category){
+        return productService.getAllProductByCategory(category);
+    }
+
+
 }

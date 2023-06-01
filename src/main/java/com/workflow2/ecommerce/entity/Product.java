@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name="products")
@@ -16,7 +17,7 @@ import javax.persistence.*;
 public class Product {
     @Id
     @Column(name = "product_id")
-    private String id;
+    private UUID id;
 
     @Column(name = "product_name")
     private String name;
@@ -31,12 +32,13 @@ public class Product {
     private double price;
 
     @Column(name = "product_color")
-
     private String[] color;
-
 
     @Column(name = "product_size")
     private String size;
+
+    @Column(name = "product_ratings")
+    private double ratings;
 
     @Column(name = "product_image", unique = false, nullable = true, length = 16777215)
     private byte[] image = null;
@@ -46,7 +48,4 @@ public class Product {
 
     @Column(name="product_totalStock")
     private int totalStock;
-
-    @Column(name="product_subcategory")
-    private String subcategory;
 }

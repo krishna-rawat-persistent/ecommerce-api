@@ -1,10 +1,10 @@
 package com.workflow2.ecommerce.services.impl;
 
 import com.workflow2.ecommerce.entity.User;
-import com.workflow2.ecommerce.model.Login;
-import com.workflow2.ecommerce.model.Register;
+import com.workflow2.ecommerce.dto.Login;
+import com.workflow2.ecommerce.dto.Register;
 import com.workflow2.ecommerce.repository.UserRepo;
-import com.workflow2.ecommerce.response.Response;
+import com.workflow2.ecommerce.dto.Response;
 import com.workflow2.ecommerce.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
                 String hrs = String.valueOf(calendar.get(calendar.HOUR));
                 String min = String.valueOf(calendar.get(Calendar.MINUTE));
                 String userId = register.getName().substring(0,3)+register.getEmail().substring(0,2)+day+month+hrs+min;
-                repo.save(User.builder().id(userId)
+                repo.save(User.builder().id(UUID.randomUUID())
                         .email(register.getEmail())
                         .name(register.getName())
                         .phoneNo(register.getPhoneNo())

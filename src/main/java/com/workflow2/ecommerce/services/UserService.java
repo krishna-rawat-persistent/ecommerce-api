@@ -1,8 +1,8 @@
 package com.workflow2.ecommerce.services;
 
-import com.workflow2.ecommerce.model.Login;
-import com.workflow2.ecommerce.model.Register;
-import com.workflow2.ecommerce.response.Response;
+import com.workflow2.ecommerce.dto.Login;
+import com.workflow2.ecommerce.dto.Register;
+import com.workflow2.ecommerce.dto.Response;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
