@@ -4,6 +4,8 @@ import com.workflow2.ecommerce.entity.Product;
 import com.workflow2.ecommerce.model.ProductDTO;
 import com.workflow2.ecommerce.services.ProductService;
 import com.workflow2.ecommerce.util.ImageUtility;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,9 @@ public class ProductController {
 
     @PostMapping(value = "/")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<ProductDTO> saveProduct(@RequestPart("product") Product product, @RequestPart("image") MultipartFile file) {
+    public ResponseEntity<ProductDTO> saveProduct(
+            @RequestPart("product") Product product,
+            @RequestPart("image") MultipartFile file) {
         try {
             Calendar calendar = Calendar.getInstance();
             String day = String.valueOf(calendar.get(Calendar.DATE));
