@@ -1,11 +1,13 @@
 package com.workflow2.ecommerce.services;
 
-import com.workflow2.ecommerce.entity.Cart;
+import com.workflow2.ecommerce.entity.CartDetails;
+import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.UUID;
 
+@Service
 public interface CartService {
-    public Optional<Cart>getCart(int id);
-    public Optional<Cart>getCartById();
+    public String add_to_cart(CartDetails cartDetails, UUID userId);
+
 
 }
