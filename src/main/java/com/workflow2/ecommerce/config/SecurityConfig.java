@@ -45,7 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // other public endpoints of your API may be appended to this array
             "/api/user/",
             "/api/user/authenticate",
-            "/api/user/register"
+            "/api/user/register",
+            "/api/product/**"
     };
 
     @Override

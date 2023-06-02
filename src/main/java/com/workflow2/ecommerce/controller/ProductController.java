@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/product")
-@CrossOrigin()
+@CrossOrigin("*")
 public class ProductController {
 
     @Autowired
@@ -53,19 +53,16 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('User','Admin')")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") UUID productId){
         return productService.getProduct(productId);
     }
 
     @GetMapping("/image/{id}")
-    @PreAuthorize("hasAnyRole('User','Admin')")
     public ResponseEntity<byte[]> getImageById(@PathVariable("id") UUID productId){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(productService.getProduct(productId).getBody().getImage());
     }
 
     @GetMapping("/")
-    @PreAuthorize("hasAnyRole('User','Admin')")
     public ResponseEntity<List<ProductDTO>> getAllProduct(){
         return productService.getAllProducts();
     }

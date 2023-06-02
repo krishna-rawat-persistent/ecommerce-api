@@ -37,6 +37,7 @@ public class CartController {
         String data = httpServletRequest.getHeader("Authorization");
         String token = data.substring(7);
         String name = jwtUtil.extractUsername(token);
+        System.out.println(name);
         User user = userRepo.findByEmail(name);
         return user;
     }

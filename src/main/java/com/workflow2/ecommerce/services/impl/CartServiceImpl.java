@@ -29,20 +29,19 @@ public class CartServiceImpl implements CartService {
         User user = userRepo.findById(userId).get();
         Cart cart= user.getCart();
         double total = cart.getTotalAmout();
+        if(cartDetails.getQuantity()==0){
+            cartDetails.setQuantity(1);
+        }
         total = total + (cartDetails.getQuantity() * cartDetails.getPrice());
         cart.setTotalAmout(total);
         Integer cartId = cart.getUserCartId();
         if(cart.getCartDetails().isEmpty())
         {
-            System.out.println("Is empty List");
-            System.out.println("Inside If part");
             List<CartDetails> list = new ArrayList<>();
             list.add(cartDetails);
             cart.setCartDetails(list);
         }
         else{
-            System.out.println("Cart not empty");
-            System.out.println("Inside else part");
             List<CartDetails> list = cart.getCartDetails();
             list.add(cartDetails);
         }

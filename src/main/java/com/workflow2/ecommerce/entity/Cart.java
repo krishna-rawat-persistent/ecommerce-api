@@ -1,6 +1,7 @@
 package com.workflow2.ecommerce.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name="Cart")
 @Entity
+@Builder
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

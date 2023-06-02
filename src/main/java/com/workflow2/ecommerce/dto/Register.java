@@ -1,5 +1,6 @@
 package com.workflow2.ecommerce.dto;
 
+import com.workflow2.ecommerce.entity.Cart;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,4 +17,5 @@ public class Register {
     private String phoneNo;
     private String role;
     private String password;
+    private Cart cart;
 }
