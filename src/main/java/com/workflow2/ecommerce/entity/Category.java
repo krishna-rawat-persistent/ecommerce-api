@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * This is the Entity class for Category table
+ * @author Mayur_Jadhav
+ * @version v0.0.1
+ */
 @Entity
 @Table(name="product_category")
 @Data

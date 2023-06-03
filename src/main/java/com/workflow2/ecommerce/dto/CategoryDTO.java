@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+/**
+ * This class is used to return the response for Category
+ * @author Mayur_Jadhav
+ * @version v0.0.1
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

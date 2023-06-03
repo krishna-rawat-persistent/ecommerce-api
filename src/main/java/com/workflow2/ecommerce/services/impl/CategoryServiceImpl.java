@@ -12,24 +12,35 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * This class contains implementation of all the methods related to category service
+ * @author Mayur_Jadhav
+ * @version v0.0.1
+ */
 @Service
 public class CategoryServiceImpl implements CategoryService {
 	@Autowired
 	CategoryRepo categoryRepo;
+
+	/**
+	 * This method is used to create category to the database
+	 * @param category It is a Category object which have category name and image as attribute
+	 * @return It returns Category which we saved to the database
+	 */
 	@Override
 	public CategoryDTO saveCategory(Category category) {
 		Category category1 = categoryRepo.save(category);
 		return CategoryDTO.builder().name(category1.getName()).image(ImageUtility.decompressImage(category1.getImage())).build();
 	}
 
+	/**
+	 * This method returns all the category presents in the database
+	 * @return It returns list of all the categories
+	 */
 	@Override
 	public List<CategoryDTO> getAllCategories() {
 		try {
 			List<Category> categories = categoryRepo.findAll();
-			if (categories == null) {
-				return null;
-			}
 			List<CategoryDTO> decompressCats = new ArrayList<>();
 			for (Category cat : categories) {
 				cat.setImage(ImageUtility.decompressImage(cat.getImage()));
@@ -45,6 +56,11 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 	}
 
+	/**
+	 * Using this method we can delete a particular category by given name
+	 * @param name This is a String value which contains name of category we wanted to delete
+	 * @return It returns success message
+	 */
 	@Override
 	public String deleteCategoryById(String name) {
 		
@@ -52,6 +68,12 @@ public class CategoryServiceImpl implements CategoryService {
 		return "Successfully deleted the category";
 	}
 
+	/**
+	 * This method is used to update category
+	 * @param category This parameter have Category object which we need to update
+	 * @param name This parameter contains name of the category we wanted to update
+	 * @return It returns updated category
+	 */
 	@Override
 	public CategoryDTO updateCategoryById(Category category, String name) {
 			final Category cat = categoryRepo.getReferenceById(name);
@@ -61,6 +83,11 @@ public class CategoryServiceImpl implements CategoryService {
 
 	}
 
+	/**
+	 * This method help us to fetch the particular category by category name
+	 * @param name This parameter is the name of category we wanted to fetch
+	 * @return It returns the category whose name we have given
+	 */
 	@Override
 	public CategoryDTO getCategoryById(String name) {
 			final Category cat = categoryRepo.getReferenceById(name);
@@ -68,6 +95,10 @@ public class CategoryServiceImpl implements CategoryService {
 
 	}
 
+	/**
+	 * This method delete all the categories from the database
+	 * @return It returns Success message
+	 */
 	@Override
 	public  String deleteAllCategories() {
 		categoryRepo.deleteAll();

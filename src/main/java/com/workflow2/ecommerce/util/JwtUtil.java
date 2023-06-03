@@ -15,6 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * This class contains all the Utility functionality for JWT authentication and token generation
+ * @author Tejas_Badjate
+ * @version v0.0.1
+ */
 @Service
 public class JwtUtil {
     @Autowired
@@ -23,31 +28,70 @@ public class JwtUtil {
 
     private String secret = "secretkey";
 
+    /**
+     * This method takes token as parameter and extract Username for that token
+     * @param token This is a JWT token that we need to extract username
+     * @return This returns name of user
+     */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
+    /**
+     * This method return expiration date of token
+     * @param token This is a JWT token that we need to extract expiration date
+     * @return It returns token expiration date
+     */
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    /**
+     * This method extract claims over the token
+     * @param token This is a JWT token
+     * @param claimsResolver It is a function which follows functional programming approach to extract claim
+     * @param <T> This is  a Type parameter for above function
+     * @return This return a type<T> object that have all the claims
+     */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
+    /**
+     * This method help us find all possible claims over a JWT token
+     * @param token This is a JWT token for extracting all the claims
+     * @return It returns all the clain for given token
+     */
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
+    /**
+     * This method validate that token is expired or not
+     * @param token This is a JWT token
+     * @return It return a boolean result true if token is expired otherwise false
+     */
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
+    /**
+     * This method generate toke using username
+     * @param username It is the username given by user to generate token
+     * @return It returns token which is String type
+     */
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
     }
 
+    /**
+     * This method help to create token using claims and subject(username)
+     * @param claims This parameter is a Hashmap of String and Object are type of key and value pair
+     * @param subject It is the username which we use to generate token
+     * @return It returns token which is String type
+     */
     private String createToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
@@ -55,10 +99,22 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
+    /**
+     * This method Validate that token is valid or not
+     * @param token This is the JWT token which we have to validate
+     * @param userDetails This have userDetails of user whose token is going to validate
+     * @return It return true if token is valid otherwise it returns false
+     */
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String email = extractUsername(token);
         return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    /**
+     * This method checks role from the authorization header
+     * @param authorizationHeader It is the authorization header passed by user which have token inside that
+     * @return It returns true if user is Admin else it return false for all the users
+     */
     public boolean check_role(String authorizationHeader){
         String token = authorizationHeader.substring(7);
         String name = this.extractUsername(token);

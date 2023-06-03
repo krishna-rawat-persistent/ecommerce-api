@@ -6,6 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * This Class have the required attribute for registering an User
+ * @author krishna_rawat
+ * @version v0.0.1
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

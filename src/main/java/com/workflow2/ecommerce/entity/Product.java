@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.UUID;
 
+/**
+ * This is the Entity class for Product table
+ * @author krishna_rawat & nikhitha_sripada
+ * @version v0.0.1
+ */
 @Entity
 @Table(name="products")
 @Data

@@ -17,6 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * This class have all the functionality to filter requests
+ * @author Tejas_Badjate
+ * @version v0.0.1
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -25,7 +30,14 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService service;
 
-
+    /**
+     * This method filter requests based on the access rights given to the user
+     * @param httpServletRequest This parameter contains request attributes for the API call
+     * @param httpServletResponse This parameter contains response attribute for the API call
+     * @param filterChain This parameter have all the filter chains that we need validate according to provided conditions
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 

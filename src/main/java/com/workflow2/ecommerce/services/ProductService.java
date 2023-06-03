@@ -7,6 +7,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This interface have method structure for all product specific operations
+ * @author krishna_rawat
+ * @version 0.0.1
+ */
 public interface ProductService {
     ResponseEntity<ProductDTO> saveProduct(Product product);
     ResponseEntity<ProductDTO> getProduct(UUID productId);

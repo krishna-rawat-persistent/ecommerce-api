@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.UUID;
 
+/**
+ * This is the entity class for User
+ * @author krishna_rawat
+ * @version v0.0.1
+ */
 @Entity
 @Table(name = "users")
 @Data

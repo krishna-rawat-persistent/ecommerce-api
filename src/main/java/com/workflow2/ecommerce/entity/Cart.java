@@ -9,6 +9,11 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is the Entity class for Cart table
+ * @author Tejas_Badjate
+ * @version v0.0.1
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

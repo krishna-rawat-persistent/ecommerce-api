@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+/**
+ * This class is used to return the response for product
+ * @author krishna_rawat
+ * @version v0.0.1
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

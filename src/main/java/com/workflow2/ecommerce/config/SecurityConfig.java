@@ -19,6 +19,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * This class have all the security configuration
+ * @author krishna_rawat & Tejas_Badjate
+ * @version v0.0.1
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -30,6 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilter jwtFilter;
 
+    /**
+     * This variable have all the public path list
+     */
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",
@@ -46,24 +54,46 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/user/",
             "/api/user/authenticate",
             "/api/user/register",
-            "/api/product/**"
+            "/api/product/**",
+            "/api/category/**",
+            "api/search/**"
     };
 
+    /**
+     * This method configure user detail service
+     * @param auth It is a AuthenticationManagerBuilder class object which help us to configure user detail service class
+     * @throws Exception
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
     }
+
+    /**
+     * This bean is used to return BCryptPasswordEncoder class to encode the passwords
+     * @return It return PasswordEncoder class object which have instance of BCryptPasswordEncoder class
+     */
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * This method returns object of parent AuthenticationManager bean class
+     * @return It returns object of parent AuthenticationManager bean class
+     * @throws Exception
+     */
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * This method all the endpoint security and secure all the entry point
+     * @param http It take HttpSecurity class object to configure it
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll()

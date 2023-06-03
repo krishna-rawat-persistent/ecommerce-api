@@ -17,6 +17,11 @@ import java.util.Calendar;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * This class is the implementation of user module which contains Login and Register method
+ * @author krishna_rawat
+ * @version v0.0.1
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -26,6 +31,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * This method is validating the user and returning response as per the verification
+     * @param login  - It takes the object of Login class which contains email and password as attribute
+     * @return - it returns object of response entity class which have Response POJO as body
+     */
     @Override
     public ResponseEntity<Response> login(Login login) {
         User user = repo.findByEmail(login.getEmail());
@@ -48,6 +58,11 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response.builder().status(false).message("Email Not Exist !!").build());
     }
 
+    /**
+     * This method is validating the user inserting records to the database and also return conflict(409) status  if there is duplication in user data
+     * @param register  - It takes the object of Register class which contains name, email, password, phoneNo, role and cart as attribute
+     * @return - it returns object of response entity class which have Response POJO as body
+     */
     @Override
     public ResponseEntity<Response> register(Register register) {
         User user = repo.findByEmail(register.getEmail());
@@ -56,12 +71,6 @@ public class UserServiceImpl implements UserService {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Response.builder().message("Please fill all the values").status(false).build());
             }
             try {
-                Calendar calendar = Calendar.getInstance();
-                String day = String.valueOf(calendar.get(Calendar.DATE));
-                String month = String.valueOf(calendar.get(Calendar.MONTH));
-                String hrs = String.valueOf(calendar.get(calendar.HOUR));
-                String min = String.valueOf(calendar.get(Calendar.MINUTE));
-                String userId = register.getName().substring(0,3)+register.getEmail().substring(0,2)+day+month+hrs+min;
                 repo.save(User.builder().id(UUID.randomUUID())
                         .email(register.getEmail())
                         .name(register.getName())

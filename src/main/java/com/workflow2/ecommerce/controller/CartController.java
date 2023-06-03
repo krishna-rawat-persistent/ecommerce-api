@@ -16,6 +16,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * This controller class have all the methods required for cart functionality
+ * @author Tejas_Badjate
+ * @version v0.0.1
+ */
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
@@ -33,6 +38,11 @@ public class CartController {
     @Autowired
     CartServiceImpl service;
 
+    /**
+     * This method help us to find user from the user from the request body
+     * @param httpServletRequest It is the request body
+     * @return It return the user we have find from the token
+     */
     private User getUser(HttpServletRequest httpServletRequest){
         String data = httpServletRequest.getHeader("Authorization");
         String token = data.substring(7);
@@ -43,6 +53,12 @@ public class CartController {
     }
 
 
+    /**
+     * This method adds items/products to the cart
+     * @param cartDetails It has all the item and cart details
+     * @param httpServletRequest It contains request body
+     * @return It return string value which contains success message
+     */
    @PostMapping("/addtocart")
     public String addToCart(@RequestBody CartDetails cartDetails, HttpServletRequest httpServletRequest){
         User user = getUser(httpServletRequest);
@@ -50,6 +66,11 @@ public class CartController {
         return service.add_to_cart(cartDetails,id);
     }
 
+    /**
+     * This endpoint return cart for the user who has login currently
+     * @param httpServletRequest It contains request body
+     * @return It returns cart for the user currently logged in
+     */
     @GetMapping("/cart")
     public Optional<Cart> getAllItems(HttpServletRequest httpServletRequest){
         User user = getUser(httpServletRequest);
@@ -59,6 +80,11 @@ public class CartController {
     }
 
 
+    /**
+     * This endpoint returns all the cart details for current user
+     * @param httpServletRequest It contains request body
+     * @return It returns CartDetails object which contains all the cart details for current user
+     */
     @GetMapping("/cartDetails")
     public List<CartDetails> CartDetails(HttpServletRequest httpServletRequest){
         System.out.println("Inside cart details");
@@ -70,6 +96,12 @@ public class CartController {
         return list;
     }
 
+    /**
+     * This endpoint returns particular items details from cart by product id
+     * @param httpServletRequest It contains request body
+     * @param productId It is a String value which contains product as path variable
+     * @return It returns cart detail object which have all the details related to product whose id is given
+     */
     @GetMapping("/cartDetails/{productId}")
     public CartDetails CartDetailById(HttpServletRequest httpServletRequest,@PathVariable String productId){
         User user = getUser(httpServletRequest);
@@ -87,6 +119,12 @@ public class CartController {
         return list.get(x);
     }
 
+    /**
+     * This endpoint update the cartDetails within a cart
+     * @param httpServletRequest It contains request body
+     * @param cartDetails This is the cartDetails class object contains updated information of cart items
+     * @return It returns cartDetails class object which contains updated item
+     */
     @PutMapping("/cartDetails")
     public CartDetails updateCartDetails(HttpServletRequest httpServletRequest, @RequestBody CartDetails cartDetails){
         User user = getUser(httpServletRequest);
@@ -111,6 +149,12 @@ public class CartController {
         return cartDetails1;
     }
 
+    /**
+     * This endpoint can delete cart details od an item from the product id
+     * @param httpServletRequest It contains request body
+     * @param productId It is a String value which contains product as path variable
+     * @return It returns cart details after removing/deleting the item from the cart
+     */
     @DeleteMapping("/cartDetails/{productId}")
     public List<CartDetails> CartDetailDeleteById(HttpServletRequest httpServletRequest,@PathVariable String productId){
         User user = getUser(httpServletRequest);
@@ -134,6 +178,11 @@ public class CartController {
         return list;
     }
 
+    /**
+     * This endpoint delete all the cartDetails from the cart
+     * @param httpServletRequest It contains request body
+     * @return It return String value with success message
+     */
     @DeleteMapping("/cart")
     public String deleteAllCart(HttpServletRequest httpServletRequest){
         User user = getUser(httpServletRequest);

@@ -9,6 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * This is the Entity class for CartDetails table
+ * @author Tejas_Badjate
+ * @version v0.0.1
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

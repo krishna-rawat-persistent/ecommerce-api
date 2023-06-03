@@ -4,16 +4,19 @@ import com.workflow2.ecommerce.dto.CategoryDTO;
 import com.workflow2.ecommerce.entity.Category;
 
 import java.util.List;
-import java.util.Optional;
 
-
+/**
+ * This Interface contains all the methods to perform operations category class
+ * @author Mayur_Jadhav
+ * @version v0.0.1
+ */
 public interface CategoryService {
 	
-	public CategoryDTO saveCategory(Category category);
-	public List<CategoryDTO> getAllCategories();
-	public String deleteCategoryById(String id);
-	public CategoryDTO updateCategoryById(Category category, String name);
-	public CategoryDTO getCategoryById(String id);
-	public String deleteAllCategories(); 
+	 CategoryDTO saveCategory(Category category);
+	 List<CategoryDTO> getAllCategories();
+	 String deleteCategoryById(String id);
+	 CategoryDTO updateCategoryById(Category category, String name);
+	 CategoryDTO getCategoryById(String id);
+	 String deleteAllCategories();
 		
 }

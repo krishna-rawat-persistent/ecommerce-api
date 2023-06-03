@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This class contains implementations of all the methods to perform operations on cart functionality
+ * @author Tejas_Badjate
+ * @version v0.0.1
+ */
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -23,7 +28,12 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private CartRepo cartRepo;
 
-
+    /**
+     * This Method add item to the cart
+     * @param cartDetails It takes cart details which have productId, quantity and price as attribute
+     * @param userId It is userId to which this cart belongs to
+     * @return It returns Success message as String
+     */
     @Override
     public String add_to_cart(CartDetails cartDetails, UUID userId) {
         User user = userRepo.findById(userId).get();

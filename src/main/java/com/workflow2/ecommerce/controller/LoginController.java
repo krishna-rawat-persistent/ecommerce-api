@@ -47,9 +47,8 @@ public class LoginController {
 
     /**
      * This method authenticate the user also identify it's role and then return JWT token
-     * @param authRequest
-     * @return
-     * @throws Exception
+     * @param authRequest it take Authentication Request(AuthRequest) Parameter which have userName and password as attributes
+     * @return -it return's Object of Response entity class which have Response object inside body
      */
     @PostMapping("/authenticate")
     public ResponseEntity<Response> generateToken(@RequestBody AuthRequest authRequest) {

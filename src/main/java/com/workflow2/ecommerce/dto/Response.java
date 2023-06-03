@@ -5,6 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * This is the class which contains Response format for login and authentication
+ * @author krishna_rawat
+ * @version v0.0.1
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -7,14 +7,14 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@SpringBootApplication
-@EnableWebMvc
 /**
  * This is the main class of Backend API for e-commerce Application
  *
- * @Author Workflow-2 Backend Team
- *
+ * @author krishna_rawat
+ * @version v0.0.1
  */
+@SpringBootApplication
+@EnableWebMvc
 public class EcommerceApiApplication {
 
 	/**
@@ -25,6 +25,10 @@ public class EcommerceApiApplication {
 		SpringApplication.run(EcommerceApiApplication.class, args);
 	}
 
+	/**
+	 * This bean help us to allow all origins so CORS error will not throw while we access it from anywhere
+	 * @return it return WebMvcConfigurer  which have all origins allowed
+	 */
 	@Bean
 	public WebMvcConfigurer configure() {
 		return new WebMvcConfigurer() {
