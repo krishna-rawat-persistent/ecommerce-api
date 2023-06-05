@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface ProductService {
     ResponseEntity<ProductDTO> saveProduct(Product product);
     ResponseEntity<ProductDTO> getProduct(UUID productId);
-    ResponseEntity<List<ProductDTO>> getAllProducts();
+    ResponseEntity<List<Product>> getAllProducts();
     ResponseEntity<ProductDTO> updateProduct(Product product,UUID productId);
     ResponseEntity deleteProduct(UUID productId);
     ResponseEntity deleteAllProducts();

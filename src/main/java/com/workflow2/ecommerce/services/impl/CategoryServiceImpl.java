@@ -90,8 +90,12 @@ public class CategoryServiceImpl implements CategoryService {
 	 */
 	@Override
 	public CategoryDTO getCategoryById(String name) {
+		try {
 			final Category cat = categoryRepo.getReferenceById(name);
 			return CategoryDTO.builder().name(cat.getName()).image(ImageUtility.decompressImage(cat.getImage())).build();
+		}catch (Exception e){
+			return null;
+		}
 
 	}
 

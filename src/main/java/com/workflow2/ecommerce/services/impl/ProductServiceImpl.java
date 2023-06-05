@@ -91,21 +91,20 @@ public class ProductServiceImpl implements ProductService {
      * @return returns List of products inside the body of response entity class
      */
     @Override
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+    public ResponseEntity<List<Product>> getAllProducts() {
         try {
             List<Product> prods = repository.findAll();
             if (prods == null) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
-            List<ProductDTO> decompressProds = new ArrayList<>();
+            List<Product> decompressProds = new ArrayList<>();
             for (Product p : prods) {
-                p.setImage(ImageUtility.decompressImage(p.getImage()));
-                ProductDTO prod = ProductDTO.builder()
+                Product prod = Product.builder()
                         .id(p.getId())
                         .name(p.getName())
                         .category(p.getCategory())
                         .brand(p.getBrand())
-                        .image(p.getImage())
+                        .image(ImageUtility.decompressImage(p.getImage()))
                         .size(p.getSize())
                         .color(p.getColor())
                         .price(p.getPrice())

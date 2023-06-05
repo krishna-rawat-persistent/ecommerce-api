@@ -42,4 +42,7 @@ public interface ProductRepo extends JpaRepository<Product, String> {
      * @return Particular product whose id is given in the parameter
      */
     Product getReferenceById(UUID productId);
+
+    @Query(value="select * from products p LIMIT 5", nativeQuery=true)
+    List<Product> findTop15();
 }
