@@ -26,9 +26,10 @@ public class CategoryServiceImpl implements CategoryService {
 	 * This method is used to create category to the database
 	 * @param category It is a Category object which have category name and image as attribute
 	 * @return It returns Category which we saved to the database
+	 * @throws Exception
 	 */
 	@Override
-	public CategoryDTO saveCategory(Category category) {
+	public CategoryDTO saveCategory(Category category) throws Exception {
 		Category category1 = categoryRepo.save(category);
 		return CategoryDTO.builder().name(category1.getName()).image(ImageUtility.decompressImage(category1.getImage())).build();
 	}
@@ -73,9 +74,10 @@ public class CategoryServiceImpl implements CategoryService {
 	 * @param category This parameter have Category object which we need to update
 	 * @param name This parameter contains name of the category we wanted to update
 	 * @return It returns updated category
+	 * @throws Exception
 	 */
 	@Override
-	public CategoryDTO updateCategoryById(Category category, String name) {
+	public CategoryDTO updateCategoryById(Category category, String name) throws Exception {
 			final Category cat = categoryRepo.getReferenceById(name);
 			categoryRepo.save(category);
 			category.setImage(ImageUtility.decompressImage(cat.getImage()));
@@ -87,9 +89,10 @@ public class CategoryServiceImpl implements CategoryService {
 	 * This method help us to fetch the particular category by category name
 	 * @param name This parameter is the name of category we wanted to fetch
 	 * @return It returns the category whose name we have given
+	 * @throws Exception
 	 */
 	@Override
-	public CategoryDTO getCategoryById(String name) {
+	public CategoryDTO getCategoryById(String name) throws Exception {
 			final Category cat = categoryRepo.getReferenceById(name);
 			return CategoryDTO.builder().name(cat.getName()).image(ImageUtility.decompressImage(cat.getImage())).build();
 

@@ -5,11 +5,14 @@ import com.workflow2.ecommerce.entity.Category;
 import com.workflow2.ecommerce.services.CategoryService;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,9 +23,10 @@ import java.util.List;
  * @version v0.0.1
  */
 @RestController
+@ControllerAdvice
 @RequestMapping("api/category")
 @CrossOrigin(origins = "*")
-public class CategoryController {
+public class CategoryController extends ResponseEntityExceptionHandler{
 	@Autowired
 	CategoryService categoryService;
 
@@ -87,4 +91,13 @@ public class CategoryController {
 	public ResponseEntity<String> deleteCategories() {
 		return ResponseEntity.ok().body(categoryService.deleteAllCategories());
 	}
+
+	@ExceptionHandler(value 
+      = { IllegalArgumentException.class, IllegalStateException.class })
+    protected ResponseEntity<Object> handleConflict(
+      RuntimeException ex, WebRequest request) {
+        String bodyOfResponse = "This should be application specific";
+        return handleExceptionInternal(ex, bodyOfResponse, 
+          new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
 }

@@ -3,8 +3,11 @@ package com.workflow2.ecommerce.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.experimental.UtilityClass;
+
+import com.workflow2.ecommerce.Dao.UserDao;
 import com.workflow2.ecommerce.entity.User;
-import com.workflow2.ecommerce.repository.UserRepo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,10 +26,10 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
     @Autowired
-    UserRepo userRepository;
+    UserDao userRepository;
 
 
-    private String secret = "secretkey";
+    private static final String secret = "secretkey";
 
     /**
      * This method takes token as parameter and extract Username for that token

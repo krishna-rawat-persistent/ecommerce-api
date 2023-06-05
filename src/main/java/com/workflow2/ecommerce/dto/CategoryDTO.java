@@ -1,5 +1,6 @@
 package com.workflow2.ecommerce.dto;
 
+import com.workflow2.ecommerce.entity.Category;
 import com.workflow2.ecommerce.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,5 +23,6 @@ public class CategoryDTO {
     private String name;
     private byte[] image;
     private Set<Product> products;
+    
 
 }
