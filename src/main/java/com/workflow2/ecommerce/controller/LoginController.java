@@ -1,8 +1,11 @@
 package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.dto.AuthRequest;
+import com.workflow2.ecommerce.dto.LoginResponse;
 import com.workflow2.ecommerce.dto.Register;
 import com.workflow2.ecommerce.dto.Response;
+import com.workflow2.ecommerce.entity.User;
+import com.workflow2.ecommerce.repository.UserRepo;
 import com.workflow2.ecommerce.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +31,9 @@ public class LoginController {
     private UserService service;
 
     @Autowired
+    private UserRepo repo;
+
+    @Autowired
     private JwtUtil jwtUtil;
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -50,14 +56,16 @@ public class LoginController {
      * @return -it return's Object of Response entity class which have Response object inside body
      */
     @PostMapping("/authenticate")
-    public ResponseEntity<Response> generateToken(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<LoginResponse> generateToken(@RequestBody AuthRequest authRequest) {
+        User user =null;
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword())
             );
+            user = repo.findByEmail(authRequest.getUserName());
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.builder().message("Invalid userName/Password!!").status(false).email(authRequest.getUserName()).build());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(LoginResponse.builder().message("Invalid userName/Password!!").status(false).email(authRequest.getUserName()).build());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).jwtToken(jwtUtil.generateToken(authRequest.getUserName())).build());
+        return ResponseEntity.status(HttpStatus.OK).body(LoginResponse.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).name(user.getName()).phoneNo(user.getPhoneNo()).jwtToken(jwtUtil.generateToken(authRequest.getUserName())).build());
     }
 }
