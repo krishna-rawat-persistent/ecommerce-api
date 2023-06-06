@@ -1,17 +1,22 @@
 package com.workflow2.ecommerce.controller;
 
+import com.workflow2.ecommerce.dto.CartItems;
+import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.Cart;
 import com.workflow2.ecommerce.entity.CartDetails;
+import com.workflow2.ecommerce.entity.Product;
 import com.workflow2.ecommerce.entity.User;
 import com.workflow2.ecommerce.repository.CartDetailRepo;
 import com.workflow2.ecommerce.repository.CartRepo;
 import com.workflow2.ecommerce.repository.UserRepo;
+import com.workflow2.ecommerce.services.ProductService;
 import com.workflow2.ecommerce.services.impl.CartServiceImpl;
 import com.workflow2.ecommerce.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,11 +36,15 @@ public class CartController {
 
     @Autowired
     CartRepo cartRepo;
+
     @Autowired
     CartDetailRepo cartDetailRepo;
 
     @Autowired
     CartServiceImpl service;
+
+    @Autowired
+    ProductService prodService;
 
     /**
      * This method help us to find user from the user from the request body
@@ -85,14 +94,26 @@ public class CartController {
      * @return It returns CartDetails object which contains all the cart details for current user
      */
     @GetMapping("/cartDetails")
-    public List<CartDetails> CartDetails(HttpServletRequest httpServletRequest){
-        System.out.println("Inside cart details");
+    public List<CartItems> CartDetails(HttpServletRequest httpServletRequest){
         User user = getUser(httpServletRequest);
         int id = user.getCart().getUserCartId();
         Cart cart = cartRepo.findById(id).get();
-        System.out.println("cart: " + cart );
         List<CartDetails> list = cart.getCartDetails();
-        return list;
+        List<CartItems> cartItemsList = new ArrayList<>();
+        for(CartDetails c:list){
+            ProductDTO product = prodService.getProduct(c.getProductId()).getBody();
+            CartItems cartItems = CartItems.builder().productId(c.getProductId())
+                    .color(c.getColor())
+                    .size(c.getSize())
+                    .quantity(c.getQuantity())
+                    .image(product.getImage())
+                    .price(product.getPrice())
+                    .name(product.getName())
+                    .build();
+            cartItemsList.add(cartItems);
+        }
+
+        return cartItemsList;
     }
 
     /**
@@ -130,19 +151,19 @@ public class CartController {
         int id = user.getCart().getUserCartId();
         Cart cart = cartRepo.findById(id).get();
         List<CartDetails> list = cart.getCartDetails();
-        int  x=0;
+        int index =0;
         for(int i=0;i<list.size();i++){
             if(list.get(i).getProductId().equals(cartDetails.getProductId())){
-                x=i;
+                index=i;
                 break;
             }
         }
-        CartDetails cartDetails1 = cart.getCartDetails().get(x);
-        cart.setTotalAmout(cart.getTotalAmout() -(cartDetails1.getPrice() * cartDetails1.getQuantity()));
+        CartDetails cartDetails1 = cart.getCartDetails().get(index);
+        ProductDTO product = prodService.getProduct(cartDetails1.getProductId()).getBody();
+        cart.setTotalAmout(cart.getTotalAmout() -(product.getPrice() * cartDetails1.getQuantity()));
         cartDetails1.setProductId(cartDetails.getProductId());
-        cartDetails1.setPrice(cartDetails.getPrice());
         cartDetails1.setQuantity(cartDetails.getQuantity());
-        cart.setTotalAmout(cart.getTotalAmout() + (cartDetails1.getPrice() * cartDetails1.getQuantity()));
+        cart.setTotalAmout(cart.getTotalAmout() + (product.getPrice() * cartDetails1.getQuantity()));
         cartRepo.save(cart);
         cartDetailRepo.save(cartDetails1);
         return cartDetails1;
@@ -168,8 +189,9 @@ public class CartController {
             }
         }
         CartDetails cartDetails1 = cart.getCartDetails().get(x);
+        ProductDTO product = prodService.getProduct(cartDetails1.getProductId()).getBody();
         int cartDetailsId = cartDetails1.getId();
-        cart.setTotalAmout(cart.getTotalAmout() -(cartDetails1.getPrice() * cartDetails1.getQuantity()));
+        cart.setTotalAmout(cart.getTotalAmout() -(product.getPrice() * cartDetails1.getQuantity()));
         cart.getCartDetails().remove(x);
         cart.setCartDetails(list);
         cartRepo.save(cart);

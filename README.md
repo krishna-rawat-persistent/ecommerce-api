@@ -38,11 +38,16 @@ Here is what this little application demonstrates:
 * *Spring Data* Integration with JPA/Hibernate with just a few lines of configuration and familiar annotations.
 * All APIs are "self-documented" by Swagger3 using annotations
 
+-----
 Here are some endpoints you can call:
+
+##Product
 
 ### Create a product resource
 
 ```
+++++ Admin Access only ++++
+
 POST /api/product/
 Accept: application/Multipart_Form_Data
 Content-Type: application/json
@@ -63,16 +68,84 @@ RESPONSE: HTTP 201 (Created)
 Location header: http://localhost:8090/api/product/
 ```
 
-### Retrieve a paginated list of products
+### Retrieve list of all the products
 
 ```
-http://localhost:8090/api/product/?page=0&size=10
++++ Public Access +++
+
+GET /api/product/
 
 Response: HTTP 200
-Content: paginated list 
+Content: application/json 
+```
+
+### Retrieve a product by id
+
+```
++++ Public Access +++
+
+GET /api/product/{productId}
+
+Response: HTTP 200
+Content: application/json 
 ```
 
 ### Update a Product
 
 ```
+++++ Admin Access Only ++++
+
 PUT /api/product/{productId}
+Accept: multipart/form-data
+Content-Type: application/json
+
+{
+ "name":"Embra Upholstered Wingback Chair",
+ "category":"furniture",
+ "brand": "Everly Quinn",
+ "price":167.99,
+ "color":["Gray","Blue","Dark Grey"],
+ "size":null,
+ "ratings":4.5,
+ "description":"<ol><li>best in this category</li><li>light weight</li></ol>",
+ "totalStock":67
+}
+
+RESPONSE: HTTP 200 (Ok)
+```
+### To view Swagger 3 API docs UI
+
+Run the server and browse to localhost:8090/swagger-ui.html
+
+### To view Swagger 3 API docs JSON
+
+Run the server and browse to localhost:8090/v3/api-docs
+
+# Running the project with PostgreSQL
+
+This project uses PostgreSQL database where we are using db known as ```ecommercedb``` 
+
+Here is what you would do to back the services with PostgreSQL, for example:
+
+### In pom.xml add:
+
+```
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+```
+
+### Append this to the end of application.properties:
+
+```
+---
+
+    #Database configurations
+    spring.datasource.url=jdbc:postgresql://{Your Host}:5432/ecommercedb
+    spring.datasource.username=<Your Postgres Username>
+    spring.datasource.password=<Your Postgres Password>
+
+---
+```

@@ -1,5 +1,6 @@
 package com.workflow2.ecommerce.services.impl;
 
+import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.Cart;
 import com.workflow2.ecommerce.entity.CartDetails;
 import com.workflow2.ecommerce.entity.User;
@@ -28,6 +29,9 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private CartRepo cartRepo;
 
+    @Autowired
+    private ProductServiceImpl productService;
+
     /**
      * This Method add item to the cart
      * @param cartDetails It takes cart details which have productId, quantity and price as attribute
@@ -42,7 +46,8 @@ public class CartServiceImpl implements CartService {
         if(cartDetails.getQuantity()==0){
             cartDetails.setQuantity(1);
         }
-        total = total + (cartDetails.getQuantity() * cartDetails.getPrice());
+        ProductDTO product = productService.getProduct(cartDetails.getProductId()).getBody();
+        total = total + (cartDetails.getQuantity() * product.getPrice());
         cart.setTotalAmout(total);
         Integer cartId = cart.getUserCartId();
         if(cart.getCartDetails().isEmpty())
