@@ -4,13 +4,13 @@ import com.workflow2.ecommerce.dto.CartItems;
 import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.Cart;
 import com.workflow2.ecommerce.entity.CartDetails;
-import com.workflow2.ecommerce.entity.Product;
 import com.workflow2.ecommerce.entity.User;
-import com.workflow2.ecommerce.repository.CartDetailRepo;
-import com.workflow2.ecommerce.repository.CartRepo;
-import com.workflow2.ecommerce.repository.UserRepo;
-import com.workflow2.ecommerce.services.ProductService;
+
+import com.workflow2.ecommerce.repository.CartDao;
+import com.workflow2.ecommerce.repository.CartDetailDao;
+import com.workflow2.ecommerce.repository.UserDao;
 import com.workflow2.ecommerce.services.impl.CartServiceImpl;
+import com.workflow2.ecommerce.services.impl.ProductServiceImpl;
 import com.workflow2.ecommerce.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,22 +29,22 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api")
 public class CartController {
+//    @Autowired
+//    JwtUtil jwtUtil;
     @Autowired
-    JwtUtil jwtUtil;
-    @Autowired
-    UserRepo userRepo;
+    UserDao userDao;
 
     @Autowired
-    CartRepo cartRepo;
+    CartDao cartDao;
 
     @Autowired
-    CartDetailRepo cartDetailRepo;
+    CartDetailDao cartDetailDao;
 
     @Autowired
     CartServiceImpl service;
 
     @Autowired
-    ProductService prodService;
+    ProductServiceImpl prodService;
 
     /**
      * This method help us to find user from the user from the request body
@@ -54,9 +54,9 @@ public class CartController {
     private User getUser(HttpServletRequest httpServletRequest){
         String data = httpServletRequest.getHeader("Authorization");
         String token = data.substring(7);
-        String name = jwtUtil.extractUsername(token);
+        String name = JwtUtil.extractUsername(token);
         System.out.println(name);
-        User user = userRepo.findByEmail(name);
+        User user = userDao.findByEmail(name);
         return user;
     }
 
@@ -83,7 +83,7 @@ public class CartController {
     public Optional<Cart> getAllItems(HttpServletRequest httpServletRequest){
         User user = getUser(httpServletRequest);
         int id = user.getCart().getUserCartId();
-        Cart cart = cartRepo.findById(id).get();
+        Cart cart = cartDao.findById(id).get();
         return Optional.of(cart);
     }
 
@@ -97,7 +97,7 @@ public class CartController {
     public List<CartItems> CartDetails(HttpServletRequest httpServletRequest){
         User user = getUser(httpServletRequest);
         int id = user.getCart().getUserCartId();
-        Cart cart = cartRepo.findById(id).get();
+        Cart cart = cartDao.findById(id).get();
         List<CartDetails> list = cart.getCartDetails();
         List<CartItems> cartItemsList = new ArrayList<>();
         for(CartDetails c:list){
@@ -126,7 +126,7 @@ public class CartController {
     public CartDetails CartDetailById(HttpServletRequest httpServletRequest,@PathVariable String productId){
         User user = getUser(httpServletRequest);
         int id = user.getCart().getUserCartId();
-        Cart cart = cartRepo.findById(id).get();
+        Cart cart = cartDao.findById(id).get();
         List<CartDetails> list = cart.getCartDetails();
         CartDetails cartDetails;
         int x=0;
@@ -149,7 +149,7 @@ public class CartController {
     public CartDetails updateCartDetails(HttpServletRequest httpServletRequest, @RequestBody CartDetails cartDetails){
         User user = getUser(httpServletRequest);
         int id = user.getCart().getUserCartId();
-        Cart cart = cartRepo.findById(id).get();
+        Cart cart = cartDao.findById(id).get();
         List<CartDetails> list = cart.getCartDetails();
         int index =0;
         for(int i=0;i<list.size();i++){
@@ -164,8 +164,8 @@ public class CartController {
         cartDetails1.setProductId(cartDetails.getProductId());
         cartDetails1.setQuantity(cartDetails.getQuantity());
         cart.setTotalAmout(cart.getTotalAmout() + (product.getPrice() * cartDetails1.getQuantity()));
-        cartRepo.save(cart);
-        cartDetailRepo.save(cartDetails1);
+        cartDao.save(cart);
+        cartDetailDao.save(cartDetails1);
         return cartDetails1;
     }
 
@@ -179,7 +179,7 @@ public class CartController {
     public List<CartDetails> CartDetailDeleteById(HttpServletRequest httpServletRequest,@PathVariable String productId){
         User user = getUser(httpServletRequest);
         int id = user.getCart().getUserCartId();
-        Cart cart = cartRepo.findById(id).get();
+        Cart cart = cartDao.findById(id).get();
         List<CartDetails> list = cart.getCartDetails();
         int  x=0;
         for(int i=0;i<list.size();i++){
@@ -194,8 +194,8 @@ public class CartController {
         cart.setTotalAmout(cart.getTotalAmout() -(product.getPrice() * cartDetails1.getQuantity()));
         cart.getCartDetails().remove(x);
         cart.setCartDetails(list);
-        cartRepo.save(cart);
-        cartDetailRepo.deleteById(cartDetailsId);
+        cartDao.save(cart);
+        cartDetailDao.deleteById(cartDetailsId);
         return list;
     }
 
@@ -208,10 +208,10 @@ public class CartController {
     public String deleteAllCart(HttpServletRequest httpServletRequest){
         User user = getUser(httpServletRequest);
         int id = user.getCart().getUserCartId();
-        Cart cart = cartRepo.findById(id).get();
+        Cart cart = cartDao.findById(id).get();
         cart.getCartDetails().clear();
         cart.setTotalAmout(0);
-        cartRepo.save(cart);
+        cartDao.save(cart);
         return "Cart is clear";
     }
 }

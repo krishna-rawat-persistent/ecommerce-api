@@ -1,13 +1,15 @@
 package com.workflow2.ecommerce.util;
 
+import com.workflow2.ecommerce.repository.UserDao;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import com.workflow2.ecommerce.entity.User;
-import com.workflow2.ecommerce.repository.UserRepo;
+
+import lombok.experimental.UtilityClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+
 
 import java.util.Date;
 import java.util.HashMap;
@@ -19,20 +21,20 @@ import java.util.function.Function;
  * @author Tejas_Badjate
  * @version v0.0.1
  */
-@Service
+@UtilityClass
 public class JwtUtil {
     @Autowired
-    UserRepo userRepository;
+    UserDao userDaository;
 
 
-    private String secret = "secretkey";
+    private static  final String secret = "secretkey";
 
     /**
      * This method takes token as parameter and extract Username for that token
      * @param token This is a JWT token that we need to extract username
      * @return This returns name of user
      */
-    public String extractUsername(String token) {
+    public static String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -41,7 +43,7 @@ public class JwtUtil {
      * @param token This is a JWT token that we need to extract expiration date
      * @return It returns token expiration date
      */
-    public Date extractExpiration(String token) {
+    public static Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
@@ -52,7 +54,7 @@ public class JwtUtil {
      * @param <T> This is  a Type parameter for above function
      * @return This return a type<T> object that have all the claims
      */
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    public static <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -62,7 +64,7 @@ public class JwtUtil {
      * @param token This is a JWT token for extracting all the claims
      * @return It returns all the clain for given token
      */
-    private Claims extractAllClaims(String token) {
+    private static  Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
@@ -71,7 +73,7 @@ public class JwtUtil {
      * @param token This is a JWT token
      * @return It return a boolean result true if token is expired otherwise false
      */
-    private Boolean isTokenExpired(String token) {
+    private static Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
@@ -80,7 +82,7 @@ public class JwtUtil {
      * @param username It is the username given by user to generate token
      * @return It returns token which is String type
      */
-    public String generateToken(String username) {
+    public static String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
     }
@@ -91,7 +93,7 @@ public class JwtUtil {
      * @param subject It is the username which we use to generate token
      * @return It returns token which is String type
      */
-    private String createToken(Map<String, Object> claims, String subject) {
+    private static String createToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
@@ -114,11 +116,11 @@ public class JwtUtil {
      * @param authorizationHeader It is the authorization header passed by user which have token inside that
      * @return It returns true if user is Admin else it return false for all the users
      */
-    public boolean check_role(String authorizationHeader){
+    public static boolean check_role(String authorizationHeader){
         String token = authorizationHeader.substring(7);
-        String name = this.extractUsername(token);
+        String name = extractUsername(token);
         System.out.println(name);
-        User user = userRepository.findByEmail(name);
+        User user = userDaository.findByEmail(name);
         System.out.println(user.getRole());
         if ((user.getRole()).equals("Admin"))
             return true;

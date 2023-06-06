@@ -2,7 +2,7 @@ package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.dto.CategoryDTO;
 import com.workflow2.ecommerce.entity.Category;
-import com.workflow2.ecommerce.services.CategoryService;
+import com.workflow2.ecommerce.services.impl.CategoryServiceImpl;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,19 +11,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
  * This class have all the endpoints for category class
- * @author mayur_jadhav
+ * @author mayur_jadhav & tejas_badjate
  * @version v0.0.1
  */
 @RestController
 @RequestMapping("api/category")
 public class CategoryController {
 	@Autowired
-	CategoryService categoryService;
+	CategoryServiceImpl categoryService;
 
 	/**
 	 * This is the endpoint which returns all the categories from the database

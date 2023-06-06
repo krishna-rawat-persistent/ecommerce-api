@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 /**
  * This is the Entity class for Category table
- * @author Mayur_Jadhav
+ * @author Mayur_Jadhav & tejas_badjate
  * @version v0.0.1
  */
 @Entity

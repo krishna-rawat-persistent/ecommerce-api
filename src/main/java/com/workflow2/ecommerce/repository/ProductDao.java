@@ -12,7 +12,7 @@ import java.util.UUID;
  * @author krishna_rawat and nikhita_sripada
  * @version v0.0.1
  */
-public interface ProductRepo extends JpaRepository<Product, String> {
+public interface ProductDao extends JpaRepository<Product, String> {
 
     /**
      * This method find all the product whose name or description contains searchText
