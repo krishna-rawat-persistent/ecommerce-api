@@ -4,9 +4,10 @@ import com.workflow2.ecommerce.dto.AuthRequest;
 import com.workflow2.ecommerce.dto.LoginResponse;
 import com.workflow2.ecommerce.dto.Register;
 import com.workflow2.ecommerce.dto.Response;
+
 import com.workflow2.ecommerce.entity.User;
-import com.workflow2.ecommerce.repository.UserRepo;
-import com.workflow2.ecommerce.services.UserService;
+import com.workflow2.ecommerce.repository.UserDao;
+import com.workflow2.ecommerce.services.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +29,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 public class LoginController {
 
     @Autowired
-    private UserService service;
+    private UserServiceImpl service;
 
     @Autowired
-    private UserRepo repo;
+    private UserDao repo;
 
-    @Autowired
-    private JwtUtil jwtUtil;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -66,6 +65,7 @@ public class LoginController {
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(LoginResponse.builder().message("Invalid userName/Password!!").status(false).email(authRequest.getUserName()).build());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(LoginResponse.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).name(user.getName()).phoneNo(user.getPhoneNo()).jwtToken(jwtUtil.generateToken(authRequest.getUserName())).build());
+        return ResponseEntity.status(HttpStatus.OK).body(LoginResponse.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).name(user.getName()).phoneNo(user.getPhoneNo()).jwtToken(JwtUtil.generateToken(authRequest.getUserName())).build());
+
     }
 }

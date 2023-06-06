@@ -2,7 +2,7 @@ package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.entity.Product;
 import com.workflow2.ecommerce.dto.ProductDTO;
-import com.workflow2.ecommerce.services.ProductService;
+import com.workflow2.ecommerce.services.impl.ProductServiceImpl;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +27,7 @@ import java.util.UUID;
 public class ProductController {
 
     @Autowired
-    private ProductService productService;
+    private ProductServiceImpl productService;
 
     /**
      * This method is the endpoint method for creating product

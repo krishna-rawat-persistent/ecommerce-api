@@ -4,9 +4,9 @@ import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.Cart;
 import com.workflow2.ecommerce.entity.CartDetails;
 import com.workflow2.ecommerce.entity.User;
-import com.workflow2.ecommerce.repository.CartRepo;
-import com.workflow2.ecommerce.repository.UserRepo;
-import com.workflow2.ecommerce.services.CartService;
+
+import com.workflow2.ecommerce.repository.CartDao;
+import com.workflow2.ecommerce.repository.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +20,14 @@ import java.util.UUID;
  * @version v0.0.1
  */
 @Service
-public class CartServiceImpl implements CartService {
+public class CartServiceImpl  {
 
 
     @Autowired
-    private UserRepo userRepo;
+    private UserDao userDao;
 
     @Autowired
-    private CartRepo cartRepo;
+    private CartDao cartDao;
 
     @Autowired
     private ProductServiceImpl productService;
@@ -38,9 +38,9 @@ public class CartServiceImpl implements CartService {
      * @param userId It is userId to which this cart belongs to
      * @return It returns Success message as String
      */
-    @Override
+
     public String add_to_cart(CartDetails cartDetails, UUID userId) {
-        User user = userRepo.findById(userId).get();
+        User user = userDao.findById(userId).get();
         Cart cart= user.getCart();
         double total = cart.getTotalAmout();
         if(cartDetails.getQuantity()==0){
@@ -49,7 +49,7 @@ public class CartServiceImpl implements CartService {
         ProductDTO product = productService.getProduct(cartDetails.getProductId()).getBody();
         total = total + (cartDetails.getQuantity() * product.getPrice());
         cart.setTotalAmout(total);
-        Integer cartId = cart.getUserCartId();
+
         if(cart.getCartDetails().isEmpty())
         {
             List<CartDetails> list = new ArrayList<>();
@@ -60,7 +60,7 @@ public class CartServiceImpl implements CartService {
             List<CartDetails> list = cart.getCartDetails();
             list.add(cartDetails);
         }
-        cartRepo.save(cart);
+        cartDao.save(cart);
         return "added to cart list data";
     }
 }

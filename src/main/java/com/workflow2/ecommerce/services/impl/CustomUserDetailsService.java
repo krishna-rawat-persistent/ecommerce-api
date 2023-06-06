@@ -2,7 +2,8 @@ package com.workflow2.ecommerce.services.impl;
 
 
 import com.workflow2.ecommerce.entity.User;
-import com.workflow2.ecommerce.repository.UserRepo;
+
+import com.workflow2.ecommerce.repository.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,7 @@ import java.util.List;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
-    private UserRepo repository;
+    private UserDao userDao;
 
     /**
      * This method loads user or find a user by its username
@@ -31,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        User user = repository.findByEmail(name);
+        User user = userDao.findByEmail(name);
         List<SimpleGrantedAuthority> role = new ArrayList<>();
         role.add(new SimpleGrantedAuthority("ROLE_"+user.getRole()));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), role);

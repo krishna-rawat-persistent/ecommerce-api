@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Tejas_Badjate
  * @version v0.0.1
  */
-public interface CartRepo extends JpaRepository<Cart,Integer> {
+public interface CartDao extends JpaRepository<Cart,Integer> {
 
 }

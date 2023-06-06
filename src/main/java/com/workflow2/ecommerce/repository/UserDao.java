@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author krishna_rawat
  * @version v0.0.1
  */
-public interface UserRepo extends JpaRepository<User, UUID> {
+public interface UserDao extends JpaRepository<User, UUID> {
     /**
      * This method help us to find user by email and password
      * @param email It takes String type of value which contains email of a user
