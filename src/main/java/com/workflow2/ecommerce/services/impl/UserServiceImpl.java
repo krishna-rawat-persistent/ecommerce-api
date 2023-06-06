@@ -1,11 +1,13 @@
 package com.workflow2.ecommerce.services.impl;
 
+import com.workflow2.ecommerce.entity.Cart;
 import com.workflow2.ecommerce.entity.User;
 import com.workflow2.ecommerce.dto.Login;
 import com.workflow2.ecommerce.dto.Register;
-import com.workflow2.ecommerce.repository.UserRepo;
+
 import com.workflow2.ecommerce.dto.Response;
-import com.workflow2.ecommerce.services.UserService;
+import com.workflow2.ecommerce.repository.UserDao;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -23,10 +25,10 @@ import java.util.UUID;
  * @version v0.0.1
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
 
     @Autowired
-    private UserRepo repo;
+    private UserDao Dao;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -36,16 +38,16 @@ public class UserServiceImpl implements UserService {
      * @param login  - It takes the object of Login class which contains email and password as attribute
      * @return - it returns object of response entity class which have Response POJO as body
      */
-    @Override
+
     public ResponseEntity<Response> login(Login login) {
-        User user = repo.findByEmail(login.getEmail());
+        User user = Dao.findByEmail(login.getEmail());
         if(user!=null){
             String plaintextPassword = login.getPassword();
             String encryptedPassword = user.getPassword();
 
             Boolean passwordMatched = passwordEncoder.matches(plaintextPassword,encryptedPassword);
             if(passwordMatched){
-                Optional<User> validUser = repo.findOneByEmailAndPassword(login.getEmail(),encryptedPassword);
+                Optional<User> validUser = Dao.findOneByEmailAndPassword(login.getEmail(),encryptedPassword);
                 if(validUser.isPresent()){
                     return ResponseEntity.ok().body(Response.builder().status(true).message("Login Successful !!").email(login.getEmail()).build());
                 }else{
@@ -63,21 +65,21 @@ public class UserServiceImpl implements UserService {
      * @param register  - It takes the object of Register class which contains name, email, password, phoneNo, role and cart as attribute
      * @return - it returns object of response entity class which have Response POJO as body
      */
-    @Override
+
     public ResponseEntity<Response> register(Register register) {
-        User user = repo.findByEmail(register.getEmail());
+        User user = Dao.findByEmail(register.getEmail());
         if(user==null) {
             if (register.getName().equals("") || register.getEmail().equals("") || register.getPassword().equals("")) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Response.builder().message("Please fill all the values").status(false).build());
             }
             try {
-                repo.save(User.builder().id(UUID.randomUUID())
+                Dao.save(User.builder().id(UUID.randomUUID())
                         .email(register.getEmail())
                         .name(register.getName())
                         .phoneNo(register.getPhoneNo())
                         .role("User")
                         .password(passwordEncoder.encode(register.getPassword()))
-                        .cart(register.getCart())
+                        .cart(new Cart())
                         .build());
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Response.builder().message("Some exception occurred").status(false).build());

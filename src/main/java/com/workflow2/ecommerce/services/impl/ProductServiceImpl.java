@@ -3,8 +3,9 @@ package com.workflow2.ecommerce.services.impl;
 
 import com.workflow2.ecommerce.entity.Product;
 import com.workflow2.ecommerce.dto.ProductDTO;
-import com.workflow2.ecommerce.repository.ProductRepo;
-import com.workflow2.ecommerce.services.ProductService;
+
+import com.workflow2.ecommerce.repository.ProductDao;
+
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,20 +23,20 @@ import java.util.UUID;
  * @version v0.0.1
  */
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl{
 
     @Autowired
-    private ProductRepo repository;
+    private ProductDao productDao;
 
     /**
      * This method save's product to the database
      * @param product it takes Product object as parameter which have all the attribute related to product
      * @return it returns object of entity with ProductDTO inside body and respective response code
      */
-    @Override
+
     public ResponseEntity<ProductDTO> saveProduct(Product product) {
         try {
-            product = repository.save(product);
+            product = productDao.save(product);
             if(product==null){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
             }
@@ -62,10 +63,10 @@ public class ProductServiceImpl implements ProductService {
      * @param productId It takes productId as argument which is type of UUID
      * @return returns product whose id is give as parameter otherwise return not found status
      */
-    @Override
+
     public ResponseEntity<ProductDTO> getProduct(UUID productId) {
         try {
-            final Optional<Product> prod = Optional.of(repository.getReferenceById(productId));
+            final Optional<Product> prod = Optional.of(productDao.getReferenceById(productId));
             if (prod==null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
@@ -90,10 +91,10 @@ public class ProductServiceImpl implements ProductService {
      * This method return all the product present in database
      * @return returns List of products inside the body of response entity class
      */
-    @Override
+
     public ResponseEntity<List<Product>> getAllProducts() {
         try {
-            List<Product> prods = repository.findAll();
+            List<Product> prods = productDao.findAll();
             if (prods == null) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
@@ -126,13 +127,12 @@ public class ProductServiceImpl implements ProductService {
      * @param productId This is the Id of the product we are supposed to update
      * @return return updated product within body of response entity class
      */
-    @Override
     public ResponseEntity<ProductDTO> updateProduct(Product product, UUID productId) {
         try {
-            final Optional<Product> prod = Optional.of(repository.getReferenceById(productId));
+            final Optional<Product> prod = Optional.of(productDao.getReferenceById(productId));
             if (prod != null) {
                 product.setId(prod.get().getId());
-                repository.save(product);
+                productDao.save(product);
                 product.setImage(ImageUtility.decompressImage(prod.get().getImage()));
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(ProductDTO.builder()
@@ -160,10 +160,10 @@ public class ProductServiceImpl implements ProductService {
      * @param productId This is the productId of the product
      * @return it return String inside the body of response entity class with appropriate status code
      */
-    @Override
+
     public ResponseEntity deleteProduct(UUID productId) {
         try {
-            repository.deleteById(productId);
+            productDao.deleteById(productId);
             return ResponseEntity.status(HttpStatus.OK).body("Deleted Successfully");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to delete there is some error");
@@ -174,10 +174,10 @@ public class ProductServiceImpl implements ProductService {
      * This method can delete all the product from the database hence this operation is only allow for admin User
      * @return it return String inside the body of response entity class with appropriate status code
      */
-    @Override
+
     public ResponseEntity deleteAllProducts() {
         try {
-            repository.deleteAll();
+            productDao.deleteAll();
             return ResponseEntity.status(HttpStatus.OK).body("All products Deleted Successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to delete there is some error");
@@ -189,10 +189,10 @@ public class ProductServiceImpl implements ProductService {
      * @param searchText This is a String which contains information about product which need to be searched
      * @return It returns list of product which fully or partially matches with the given string
      */
-    @Override
+
     public ResponseEntity<List<ProductDTO>> getAllSearchedProduct(String searchText) {
         try {
-            List<Product> prods = repository.findBySearchText(searchText);
+            List<Product> prods = productDao.findBySearchText(searchText);
             if (prods == null) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
@@ -225,10 +225,10 @@ public class ProductServiceImpl implements ProductService {
      * @param category It's a String value which contains category name
      * @return It return's list of products which belongs to the category provided in parameter
      */
-    @Override
+
     public ResponseEntity<List<ProductDTO>> getAllProductByCategory(String category) {
         try {
-            List<Product> prods = repository.findByCategory(category);
+            List<Product> prods = productDao.findByCategory(category);
             if (prods == null) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }

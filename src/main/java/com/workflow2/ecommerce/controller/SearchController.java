@@ -1,10 +1,9 @@
 package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.dto.ProductDTO;
-import com.workflow2.ecommerce.services.ProductService;
+import com.workflow2.ecommerce.services.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.List;
 @RequestMapping("api/search")
 public class SearchController {
     @Autowired
-    private ProductService productService;
+    private ProductServiceImpl productService;
 
     /**
      * This method takes SearchText as String type and find all the product which contains that text

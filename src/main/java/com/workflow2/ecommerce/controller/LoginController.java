@@ -3,7 +3,7 @@ package com.workflow2.ecommerce.controller;
 import com.workflow2.ecommerce.dto.AuthRequest;
 import com.workflow2.ecommerce.dto.Register;
 import com.workflow2.ecommerce.dto.Response;
-import com.workflow2.ecommerce.services.UserService;
+import com.workflow2.ecommerce.services.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +25,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 public class LoginController {
 
     @Autowired
-    private UserService service;
+    private UserServiceImpl service;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+//    @Autowired
+//    private JwtUtil jwtUtil;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -58,6 +58,6 @@ public class LoginController {
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.builder().message("Invalid userName/Password!!").status(false).email(authRequest.getUserName()).build());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).jwtToken(jwtUtil.generateToken(authRequest.getUserName())).build());
+        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).jwtToken(JwtUtil.generateToken(authRequest.getUserName())).build());
     }
 }

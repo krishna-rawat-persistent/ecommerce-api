@@ -9,7 +9,7 @@ import java.util.List;
  * @author Tejas_Badjate
  * @version v0.0.1
  */
-public interface CartDetailRepo extends JpaRepository<CartDetails,Integer> {
+public interface CartDetailDao extends JpaRepository<CartDetails,Integer> {
 
     /**
      * This method remove details of particular product
