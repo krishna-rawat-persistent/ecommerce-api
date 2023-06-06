@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +25,6 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("api/product")
-@CrossOrigin(origins = "*")
 public class ProductController {
 
     @Autowired
@@ -134,7 +132,7 @@ public class ProductController {
                         .build();
                 return productService.updateProduct(product1, id);
             }
-        }catch (IOException ioe){
+        }catch (Exception ioe){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }

@@ -21,7 +21,6 @@ import java.util.UUID;
  * @author Tejas_Badjate
  * @version v0.0.1
  */
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class CartController {

@@ -21,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
  * @version v0.0.1
  */
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("api/user")
 public class LoginController {
 
@@ -57,7 +56,7 @@ public class LoginController {
                     new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword())
             );
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("Invalid userName/Password!!").status(false).email(authRequest.getUserName()).build());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.builder().message("Invalid userName/Password!!").status(false).email(authRequest.getUserName()).build());
         }
         return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).jwtToken(jwtUtil.generateToken(authRequest.getUserName())).build());
     }

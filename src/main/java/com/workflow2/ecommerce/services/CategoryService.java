@@ -12,10 +12,10 @@ import java.util.List;
  */
 public interface CategoryService {
 	
-	 CategoryDTO saveCategory(Category category);
+	 CategoryDTO saveCategory(Category category) throws Exception;
 	 List<CategoryDTO> getAllCategories();
 	 String deleteCategoryById(String id);
-	 CategoryDTO updateCategoryById(Category category, String name);
+	 CategoryDTO updateCategoryById(Category category, String name) throws Exception;
 	 CategoryDTO getCategoryById(String id);
 	 String deleteAllCategories();
 		

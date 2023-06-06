@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
 	 * @return It returns Category which we saved to the database
 	 */
 	@Override
-	public CategoryDTO saveCategory(Category category) {
+	public CategoryDTO saveCategory(Category category) throws Exception {
 		Category category1 = categoryRepo.save(category);
 		return CategoryDTO.builder().name(category1.getName()).image(ImageUtility.decompressImage(category1.getImage())).build();
 	}
@@ -75,7 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
 	 * @return It returns updated category
 	 */
 	@Override
-	public CategoryDTO updateCategoryById(Category category, String name) {
+	public CategoryDTO updateCategoryById(Category category, String name) throws Exception {
 			final Category cat = categoryRepo.getReferenceById(name);
 			categoryRepo.save(category);
 			category.setImage(ImageUtility.decompressImage(cat.getImage()));

@@ -18,7 +18,7 @@ public class ImageUtility {
      * @param data  it take array of bytes as input
      * @return it return compressed array of bytes
      */
-    public static byte[] compressImage(byte[] data) {
+    public static byte[] compressImage(byte[] data) throws Exception {
 
         Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);
@@ -34,6 +34,7 @@ public class ImageUtility {
         try {
             outputStream.close();
         } catch (Exception e) {
+            throw new Exception("Some Exception Occurred while Compressing!!");
         }
         return outputStream.toByteArray();
     }
@@ -45,7 +46,7 @@ public class ImageUtility {
      * @param data  it take array of bytes as input
      * @return it return de-compressed array of bytes
      */
-    public static byte[] decompressImage(byte[] data) {
+    public static byte[] decompressImage(byte[] data) throws Exception {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
@@ -57,6 +58,7 @@ public class ImageUtility {
             }
             outputStream.close();
         } catch (Exception exception) {
+            throw new Exception("Exception occurred while decompressing Images!!");
         }
         return outputStream.toByteArray();
     }
