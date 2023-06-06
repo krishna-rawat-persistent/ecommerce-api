@@ -77,7 +77,8 @@ public class UserServiceImpl implements UserService {
                         .phoneNo(register.getPhoneNo())
                         .role("User")
                         .password(passwordEncoder.encode(register.getPassword()))
-                        .cart(register.getCart())
+                        //.cart(register.getCart())
+                        .cart(new Cart())
                         .build());
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Response.builder().message("Some exception occurred").status(false).build());
