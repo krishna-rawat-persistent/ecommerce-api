@@ -1,7 +1,7 @@
 package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.dto.ProductDTO;
-import com.workflow2.ecommerce.services.impl.ProductServiceImpl;
+import com.workflow2.ecommerce.services.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

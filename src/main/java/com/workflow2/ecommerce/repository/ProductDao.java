@@ -12,7 +12,7 @@ import java.util.UUID;
  * @author krishna_rawat and nikhita_sripada
  * @version v0.0.1
  */
-public interface ProductDao extends JpaRepository<Product, String> {
+public interface ProductDao extends JpaRepository<Product, UUID> {
 
     /**
      * This method find all the product whose name or description contains searchText
@@ -30,11 +30,6 @@ public interface ProductDao extends JpaRepository<Product, String> {
     @Query(value="select * from products p where p.product_category = :category", nativeQuery=true)
     List<Product> findByCategory(@Param("category") String category);
 
-    /**
-     * This method deletes product by product ID
-     * @param productId It's a Id of the product which we want to delete
-     */
-    void deleteById(UUID productId);
 
     /**
      * This Method help us to fetch product of given productId

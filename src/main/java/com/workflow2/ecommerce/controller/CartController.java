@@ -9,8 +9,8 @@ import com.workflow2.ecommerce.entity.User;
 import com.workflow2.ecommerce.repository.CartDao;
 import com.workflow2.ecommerce.repository.CartDetailDao;
 import com.workflow2.ecommerce.repository.UserDao;
-import com.workflow2.ecommerce.services.impl.CartServiceImpl;
-import com.workflow2.ecommerce.services.impl.ProductServiceImpl;
+import com.workflow2.ecommerce.services.CartServiceImpl;
+import com.workflow2.ecommerce.services.ProductServiceImpl;
 import com.workflow2.ecommerce.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +29,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api")
 public class CartController {
-//    @Autowired
-//    JwtUtil jwtUtil;
+
     @Autowired
     UserDao userDao;
 

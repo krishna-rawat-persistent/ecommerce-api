@@ -1,4 +1,4 @@
-package com.workflow2.ecommerce.services.impl;
+package com.workflow2.ecommerce.services;
 
 
 import com.workflow2.ecommerce.entity.Product;
@@ -166,7 +166,7 @@ public class ProductServiceImpl{
             productDao.deleteById(productId);
             return ResponseEntity.status(HttpStatus.OK).body("Deleted Successfully");
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to delete there is some error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
     }
 

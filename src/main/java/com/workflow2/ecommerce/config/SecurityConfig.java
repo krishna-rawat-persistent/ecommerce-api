@@ -2,7 +2,7 @@ package com.workflow2.ecommerce.config;
 
 
 import com.workflow2.ecommerce.filter.JwtFilter;
-import com.workflow2.ecommerce.services.impl.CustomUserDetailsService;
+import com.workflow2.ecommerce.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/user/register",
             "/api/product/**",
             "/api/category/**",
-            "api/search/**"
+            "/api/search/**"
     };
 
     /**

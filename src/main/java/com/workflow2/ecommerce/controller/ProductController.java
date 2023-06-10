@@ -2,7 +2,7 @@ package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.entity.Product;
 import com.workflow2.ecommerce.dto.ProductDTO;
-import com.workflow2.ecommerce.services.impl.ProductServiceImpl;
+import com.workflow2.ecommerce.services.ProductServiceImpl;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -143,7 +143,7 @@ public class ProductController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity deleteProductById(@PathVariable("id") UUID id){
+    public ResponseEntity deleteProductById(@PathVariable("id") final UUID id){
             return productService.deleteProduct(id);
     }
 
@@ -163,7 +163,6 @@ public class ProductController {
      * @return It returns the list of all the products belong to given category
      */
     @GetMapping("/category/{category}")
-    @PreAuthorize("hasAnyRole('User','Admin')")
     public ResponseEntity<List<ProductDTO>> getAllProductByCategory(@PathVariable("category") String category){
         return productService.getAllProductByCategory(category);
     }

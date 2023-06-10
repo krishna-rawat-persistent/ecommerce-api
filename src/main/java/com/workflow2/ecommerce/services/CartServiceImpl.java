@@ -1,4 +1,4 @@
-package com.workflow2.ecommerce.services.impl;
+package com.workflow2.ecommerce.services;
 
 import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.Cart;

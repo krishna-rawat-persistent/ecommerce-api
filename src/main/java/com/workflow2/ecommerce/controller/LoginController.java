@@ -7,7 +7,7 @@ import com.workflow2.ecommerce.dto.Response;
 
 import com.workflow2.ecommerce.entity.User;
 import com.workflow2.ecommerce.repository.UserDao;
-import com.workflow2.ecommerce.services.impl.UserServiceImpl;
+import com.workflow2.ecommerce.services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

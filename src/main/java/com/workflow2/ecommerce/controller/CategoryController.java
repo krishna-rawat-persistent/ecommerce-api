@@ -2,7 +2,7 @@ package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.dto.CategoryDTO;
 import com.workflow2.ecommerce.entity.Category;
-import com.workflow2.ecommerce.services.impl.CategoryServiceImpl;
+import com.workflow2.ecommerce.services.CategoryServiceImpl;
 import com.workflow2.ecommerce.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
