@@ -50,7 +50,7 @@ public class UserServiceImpl {
                 if(validUser.isPresent()){
                     return ResponseEntity.ok().body(Response.builder().status(true).message("Login Successful !!").email(login.getEmail()).build());
                 }else{
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.builder().status(true).message("Invalid Credentials !!").build());
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.builder().status(false).message("Invalid Credentials !!").build());
                 }
             }else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Response.builder().status(false).message("Credentials not Matching!!").build());

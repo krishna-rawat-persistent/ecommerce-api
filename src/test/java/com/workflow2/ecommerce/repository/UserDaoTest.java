@@ -3,9 +3,13 @@ package com.workflow2.ecommerce.repository;
 import com.workflow2.ecommerce.entity.Cart;
 import com.workflow2.ecommerce.entity.User;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.UUID;
 
@@ -22,7 +26,6 @@ class UserDaoTest {
     @BeforeEach
     void setUp() {
         user = User.builder().id(UUID.randomUUID()).name("Test User").role("User").email("user@gmail.com").password("Password").phoneNo("0000000000").cart(new Cart()).build();
-        userDao.save(user);
     }
 
     @AfterEach
@@ -44,6 +47,7 @@ class UserDaoTest {
     @Test
     @DisplayName("Should able to find user by email and password")
     void testFindOneByEmailAndPassword() {
+        userDao.save(user);
         User user1 = userDao.findOneByEmailAndPassword(user.getEmail(),user.getPassword()).orElse(null);
 
         assertNotNull(user1);
@@ -52,6 +56,7 @@ class UserDaoTest {
     @Test
     @DisplayName("Should able to find user by Email only")
     void testFindByEmail() {
+        userDao.save(user);
         User user1 = userDao.findByEmail(user.getEmail());
 
         assertNotNull(user1,"User should be fetched");
