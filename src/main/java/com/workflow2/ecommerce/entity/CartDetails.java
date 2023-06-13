@@ -25,6 +25,8 @@ public class CartDetails {
     private Integer id;
     private UUID productId;
     private int quantity;
+    private double price;
+    private double shippingCharges;
     private String color;
     private String size;
 }

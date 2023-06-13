@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,4 +45,8 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany(targetEntity = UserOrder.class,cascade = CascadeType.ALL)
+    @JoinColumn(name="user_order_id")
+    private List<UserOrder> userOrders = new ArrayList<>();
 }
