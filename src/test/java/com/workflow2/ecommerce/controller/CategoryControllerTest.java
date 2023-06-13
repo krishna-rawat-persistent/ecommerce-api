@@ -98,7 +98,7 @@ class CategoryControllerTest {
         roles.add(new SimpleGrantedAuthority("ROLE_Admin"));
         when(customUserDetailsService.loadUserByUsername(any())).thenReturn(new User("testmail@gmail.com","Password123",roles));
 
-        when(service.saveCategory(any())).thenReturn(CategoryDTO.builder().name(category1.getName()).build());
+        when(service.saveCategory(any())).thenReturn(CategoryDTO.builder().name(category1.getName()).build()).thenThrow(Exception.class);
 
         MockMultipartFile file = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE, (byte[]) null);
 
@@ -115,6 +115,14 @@ class CategoryControllerTest {
                 .header("Authorization","Bearer "+JwtUtil.generateToken("testmail@gmail.com"))
                 ).andExpect(status().isCreated())
                 .andExpect(content().json("{}"))
+                .andReturn();
+
+
+        MvcResult result1 = mockMvc.perform(multipart(HttpMethod.POST,"/api/category/")
+                .file(categoryData)
+                .file(file)
+                .header("Authorization","Bearer "+JwtUtil.generateToken("testmail@gmail.com"))
+        ).andExpect(status().isInternalServerError())
                 .andReturn();
 
     }
