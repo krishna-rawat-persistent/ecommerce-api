@@ -54,7 +54,6 @@ public class CartController {
         String data = httpServletRequest.getHeader("Authorization");
         String token = data.substring(7);
         String name = JwtUtil.extractUsername(token);
-        System.out.println(name);
         User user = userDao.findByEmail(name);
         return user;
     }
@@ -130,7 +129,7 @@ public class CartController {
         CartDetails cartDetails;
         int x=0;
         for(int i=0;i<list.size();i++){
-            if(list.get(i).getProductId().equals(productId)){
+            if(list.get(i).getProductId().equals(UUID.fromString(productId))){
                 x=i;
                 break;
             }
@@ -182,7 +181,7 @@ public class CartController {
         List<CartDetails> list = cart.getCartDetails();
         int  x=0;
         for(int i=0;i<list.size();i++){
-            if(list.get(i).getProductId().equals(productId)){
+            if(list.get(i).getProductId().equals(UUID.fromString(productId))){
                 x=i;
                 break;
             }
