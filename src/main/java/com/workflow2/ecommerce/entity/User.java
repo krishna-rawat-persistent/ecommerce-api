@@ -46,7 +46,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(targetEntity = UserOrder.class,cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = UserOrderCommon.class,cascade = CascadeType.ALL)
     @JoinColumn(name="user_order_id")
-    private List<UserOrder> userOrders = new ArrayList<>();
+    private List<UserOrderCommon> userOrders = new ArrayList<>();
 }

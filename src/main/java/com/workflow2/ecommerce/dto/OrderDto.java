@@ -5,6 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDate;
 
 import java.util.UUID;
@@ -15,14 +19,22 @@ import java.util.UUID;
 @Builder
 public class OrderDto {
     UUID orderId;
-    String name;
+    String userName;
     String email;
     String contactNo;
-    double orderTotal;
     int quantity;
     String deliveryAddress;
     String status;
-    LocalDate deliveryDate;
     UUID productId;
+    String productName;
+    byte [] productImage;
+    double discountedPrice;
+    double shippingCharges;
+    String size;
+    String  color;
+    String deliveryDate;
+    String orderedDate;
+    double orderTotal;
+    String description;
 
 }

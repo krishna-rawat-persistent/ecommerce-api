@@ -29,4 +29,5 @@ public class CartDetails {
     private double shippingCharges;
     private String color;
     private String size;
+    private double discountPrice;
 }

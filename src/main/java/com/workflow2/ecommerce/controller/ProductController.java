@@ -53,6 +53,8 @@ public class ProductController {
                     .size(product.getSize())
                     .color(product.getColor())
                     .ratings(product.getRatings())
+                    .discountPercent(product.getDiscountPercent())
+                    .discountedPrice(product.getPrice()-(product.getPrice() * (product.getDiscountPercent() / 100)))
                     .build();
 
             return productService.saveProduct(product1);

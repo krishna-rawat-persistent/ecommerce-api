@@ -30,5 +30,7 @@ public class ProductDTO {
     private int totalStock;
     private String subcategory;
     private double ratings;
+    private double discountedPrice;
+    private double discountPercent;
 
 }

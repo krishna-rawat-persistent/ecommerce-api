@@ -72,7 +72,9 @@ public class CartServiceImpl {
         cart.setTotalAmout(total);
         cartDetails.setShippingCharges(100);
         cartDetails.setQuantity(1);
-        cartDetails.setPrice(productDao.findById(cartDetails.getProductId()).get().getPrice());
+        Product product = productDao.findById(cartDetails.getProductId()).get();
+        cartDetails.setPrice(product.getPrice());
+        cartDetails.setDiscountPrice(product.getDiscountedPrice());
         if(cart.getCartDetails().isEmpty())
         {
             List<CartDetails> list = new ArrayList<>();

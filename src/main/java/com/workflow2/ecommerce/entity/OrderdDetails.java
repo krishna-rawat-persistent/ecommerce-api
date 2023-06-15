@@ -6,22 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.time.LocalDate;
 
 import java.util.UUID;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name="User_Order")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Entity
-public class UserOrder implements Serializable{
+public class OrderdDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private int orderId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="Tracking_id")
+    private UUID trackingId;
 
     @Column(name = "product_id")
     private UUID productId;
@@ -35,17 +31,22 @@ public class UserOrder implements Serializable{
     @Column(name = "Status")
     private String status;
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="tracking_order_id",unique = true)
-    private UUID trackingOrderId;
-
     @Column(name="ordered_date")
-    private LocalDate date;
+    private String date;
 
     @Column(name="delivery_date")
-    private LocalDate deliveryDate;
+    private String deliveryDate;
 
     @Column(name="Shipping_Charges")
     private double shippingCharges;
-}
 
+    @Column(name="address")
+    private String address;
+
+    @Column(name="color")
+    private String color;
+
+    @Column(name="size")
+    private String size;
+
+}

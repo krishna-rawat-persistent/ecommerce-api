@@ -1,82 +1,150 @@
 package com.workflow2.ecommerce.services;
 
+import com.workflow2.ecommerce.dto.AllOrderDto;
 import com.workflow2.ecommerce.dto.OrderDto;
 import com.workflow2.ecommerce.entity.*;
-import com.workflow2.ecommerce.repository.CartDao;
-import com.workflow2.ecommerce.repository.CartDetailDao;
-import com.workflow2.ecommerce.repository.UserDao;
+import com.workflow2.ecommerce.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.UUID;
 
 @Service
-public class UserOrderServiceImpl {
+public class UserOrderServiceImpl{
+
     @Autowired
     CartServiceImpl cartService;
-
     @Autowired
-    UserDao userDao;
-
+    UserOrderCommonDao userOrderCommonDao;
 
     @Autowired
     CartDao cartDao;
 
     @Autowired
-    CartDetailDao cartDetailDao;
+    ProductDao productDao;
+    @Autowired
+    UserDao userDao;
 
-    public List<OrderDto> placeOrder(User user, double totalAmount, String address) {
-        List<CartDetails> list = cartService.CartDeatils(user);
+    public int getIndexCartDetailsList( UUID trackingId, List<OrderdDetails> list){
+        int  index=0;
+        for(int i=0;i<list.size();i++){
+            if(list.get(i).getTrackingId().equals(trackingId)){
+                index=i;
+                break;
+            }
+        }
+        return index;
+    }
+    public String placeOrder(User user, double totalAmount, String address) {
+        List<CartDetails> cartDetailsList =  cartService.CartDeatils(user);
+        List<UserOrderCommon> userOrderCommonList = new ArrayList<>();
+        UserOrderCommon userOrderCommon = new UserOrderCommon();
+        List<OrderdDetails> orderdDetailsList = new ArrayList<>();
+
+        userOrderCommon.setTotalAmount(totalAmount);
         int index;
-        List<UserOrder> userOrders = new ArrayList<>();
-        List<OrderDto> orderDtos = new ArrayList<>();
-        for(index=0;index<list.size();index++){
-            CartDetails cartDetails = list.get(index);
-            UserOrder userOrder = new UserOrder();
-            userOrder.setQuantity(cartDetails.getQuantity());
-            userOrder.setProductId(cartDetails.getProductId());
-            userOrder.setTotalAmount(totalAmount);
-            userOrder.setStatus("Order Placed");
-            userOrder.setTrackingOrderId(UUID.randomUUID());
+        for(index=0;index<cartDetailsList.size();index++){
+            CartDetails cartDetails = cartDetailsList.get(index);
+            Product product = productDao.findById(cartDetails.getProductId()).get();
+            OrderdDetails orderdDetails = new OrderdDetails();
+            orderdDetails.setAddress(address);
+            orderdDetails.setColor(cartDetails.getColor());
+            orderdDetails.setSize(cartDetails.getSize());
+            orderdDetails.setQuantity(cartDetails.getQuantity());
+            orderdDetails.setStatus("Order Placed");
+            double finalShippingCharges = cartDetails.getShippingCharges()/cartDetailsList.size();
+            orderdDetails.setShippingCharges(finalShippingCharges);
             LocalDate date = LocalDate.now();
-            userOrder.setDate(date);
-            userOrder.setShippingCharges(cartDetails.getShippingCharges()/list.size());
-            userOrder.setDeliveryDate(date.plusDays(7));
-            if (user.getUserOrders().isEmpty()){
-                userOrders.add(userOrder);
+            orderdDetails.setDate(date.toString());
+            orderdDetails.setDeliveryDate(date.plusDays(7).toString());
+            orderdDetails.setTotalAmount(product.getDiscountedPrice()+finalShippingCharges);
+            orderdDetails.setProductId(cartDetails.getProductId());
+
+            if (userOrderCommon.getOrderDetailsList().isEmpty())
+            {
+                orderdDetailsList.add(orderdDetails);
             }
             else{
-                userOrders = user.getUserOrders();
-                userOrders.add(userOrder);
+                orderdDetailsList = userOrderCommon.getOrderDetailsList();
+                orderdDetailsList.add(orderdDetails);
+            }
+            if(user.getUserOrders().isEmpty()){
+                userOrderCommonList.add(userOrderCommon);
+            }
+            else {
+                userOrderCommonList = user.getUserOrders();
+                userOrderCommonList.add(userOrderCommon);
             }
 
-
-            orderDtos.add(OrderDto.builder()
-                    .orderId(userOrder.getTrackingOrderId())
-                    .name(user.getName())
-                    .email(user.getEmail())
-                    .contactNo(user.getPhoneNo())
-                    .orderTotal(totalAmount)
-                    .quantity(userOrder.getQuantity())
-                    .deliveryDate(userOrder.getDeliveryDate())
-                    .status(userOrder.getStatus())
-                    .deliveryAddress(address)
-                    .productId(userOrder.getProductId())
-                    .build());
-
         }
-        user.setUserOrders(userOrders);
+        userOrderCommon.setOrderDetailsList(orderdDetailsList);
+        user.setUserOrders(userOrderCommonList);
+        userOrderCommonDao.save(userOrderCommon);
         userDao.save(user);
         Cart cart = cartDao.findById(user.getCart().getUserCartId()).get();
         cart.getCartDetails().clear();
-        cart.setTotalAmout(0);
         cartDao.save(cart);
-        return orderDtos;
+        return "Success";
     }
 
+    public List<AllOrderDto> viewAllOrders(User user){
+        List<UserOrderCommon> userOrderCommonList = user.getUserOrders();
+        List<AllOrderDto> allOrderDtoList = new ArrayList<>();
+        int index;
+        for(index=0;index<userOrderCommonList.size();index++){
+            UserOrderCommon userOrderCommon = userOrderCommonList.get(index);
+            int innerIndex;
+            List<OrderdDetails> orderdDetailsList = userOrderCommon.getOrderDetailsList();
+            for(innerIndex=0;innerIndex<orderdDetailsList.size();innerIndex++){
+                OrderdDetails orderdDetails = orderdDetailsList.get(innerIndex);
+                Product product = productDao.findById(orderdDetails.getProductId()).get();
+                allOrderDtoList.add(AllOrderDto.builder()
+                        .orderId(userOrderCommon.getOrderId())
+                        .trackingId(orderdDetails.getTrackingId())
+                        .image(product.getImage())
+                        .status(orderdDetails.getStatus())
+                        .orderedDate(orderdDetails.getDate())
+                        .deliveryDate(orderdDetails.getDeliveryDate())
+                        .size(orderdDetails.getSize())
+                        .color(orderdDetails.getColor())
+                        .description(product.getDescription())
+                        .productName(product.getName())
+                        .build());
+            }
+        }
+        return allOrderDtoList;
+    }
 
+    public OrderDto trackOrder(User user, UUID orderId,UUID trackingId)
+    {
+        UserOrderCommon userOrderCommon = userOrderCommonDao.findById(orderId).get();
+        List<OrderdDetails> orderdDetails = userOrderCommon.getOrderDetailsList();
+        int index = getIndexCartDetailsList(trackingId,orderdDetails);
+        OrderdDetails userOrder = orderdDetails.get(index);
+        Product product = productDao.findById(userOrder.getProductId()).get();
+        return OrderDto.builder()
+                .orderId(orderId)
+                            .userName(user.getName())
+                            .contactNo(user.getPhoneNo())
+                            .email(user.getEmail())
+                            .productId(userOrder.getProductId())
+                            .productName(product.getName())
+                            .productImage(product.getImage())
+                            .quantity(userOrder.getQuantity())
+                            .orderTotal(product.getDiscountedPrice()+userOrder.getShippingCharges())
+                            .deliveryAddress(userOrder.getAddress())
+                            .shippingCharges(userOrder.getShippingCharges())
+                            .size(userOrder.getSize())
+                            .status(userOrder.getStatus())
+                            .deliveryDate(userOrder.getDeliveryDate())
+                            .discountedPrice(product.getDiscountedPrice())
+                            .orderedDate(userOrder.getDate())
+                            .color(userOrder.getColor())
+                            .description(product.getDescription())
+                            .build();
+    }
 }

@@ -52,6 +52,8 @@ public class ProductServiceImpl{
                     .totalStock(product.getTotalStock())
                     .image(ImageUtility.decompressImage(product.getImage()))
                     .ratings(product.getRatings())
+                    .discountPercent(product.getDiscountPercent())
+                    .discountedPrice(product.getDiscountedPrice())
                     .build());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
