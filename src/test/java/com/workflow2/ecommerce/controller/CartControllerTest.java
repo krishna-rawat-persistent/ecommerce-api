@@ -13,9 +13,7 @@ import com.workflow2.ecommerce.services.ProductServiceImpl;
 import com.workflow2.ecommerce.util.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -69,10 +66,10 @@ class CartControllerTest {
 
     @BeforeEach
     void setUp() {
-        cartDetails1  = new CartDetails(122,UUID.fromString("8b379426-eafa-4285-ad9c-45deb68a05a9"),2,"#17B383","M");
+        cartDetails1  = CartDetails.builder().id(122).productId(UUID.fromString("8b379426-eafa-4285-ad9c-45deb68a05a9")).quantity(2).color("#17B383").size("M").build();
         cartDetails = new ArrayList<>();
         cartDetails.add(cartDetails1);
-        cart = Cart.builder().userCartId(1).totalAmout(9008.300000000001).cartDetails(cartDetails).build();
+        cart = Cart.builder().userCartId(1).totalAmount(9008.300000000001).cartDetails(cartDetails).build();
         user = User.builder().id(UUID.randomUUID()).name("Test Name").email("testmail@gmail.com").password("Password123").phoneNo("0000000000").cart(cart).build();
         roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority("ROLE_Admin"));
@@ -92,7 +89,7 @@ class CartControllerTest {
 
     @Test
     void addToCart() throws Exception {
-        when(cartService.add_to_cart(any(),any())).thenReturn("Item Added to cart");
+        when(cartService.addToCart(any(),any())).thenReturn("Item Added to cart");
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/addtocart")
                 .content("{\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"color\":\"#17B383\",\"size\":\"M\"}")
@@ -105,7 +102,7 @@ class CartControllerTest {
                 .andReturn();
 
         verify(userDao,times(1)).findByEmail(any());
-        verify(cartService,times(1)).add_to_cart(any(),any());
+        verify(cartService,times(1)).addToCart(any(),any());
 
     }
 

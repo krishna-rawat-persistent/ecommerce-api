@@ -33,7 +33,6 @@ public class ProductServiceImpl{
      * @param product it takes Product object as parameter which have all the attribute related to product
      * @return it returns object of entity with ProductDTO inside body and respective response code
      */
-
     public ResponseEntity<ProductDTO> saveProduct(Product product) {
         try {
             product = productDao.save(product);
@@ -52,6 +51,8 @@ public class ProductServiceImpl{
                     .totalStock(product.getTotalStock())
                     .image(ImageUtility.decompressImage(product.getImage()))
                     .ratings(product.getRatings())
+                    .discountPercent(product.getDiscountPercent())
+                    .discountedPrice(product.getDiscountedPrice())
                     .build());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -63,7 +64,6 @@ public class ProductServiceImpl{
      * @param productId It takes productId as argument which is type of UUID
      * @return returns product whose id is give as parameter otherwise return not found status
      */
-
     public ResponseEntity<ProductDTO> getProduct(UUID productId) {
         try {
             final Optional<Product> prod = Optional.of(productDao.getReferenceById(productId));
@@ -81,6 +81,8 @@ public class ProductServiceImpl{
                     .description(prod.get().getDescription())
                     .totalStock(prod.get().getTotalStock())
                     .ratings(prod.get().getRatings())
+                    .discountedPrice(prod.get().getDiscountedPrice())
+                    .discountPercent(prod.get().getDiscountPercent())
                     .build());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -91,7 +93,6 @@ public class ProductServiceImpl{
      * This method return all the product present in database
      * @return returns List of products inside the body of response entity class
      */
-
     public ResponseEntity<List<Product>> getAllProducts() {
         try {
             List<Product> prods = productDao.findAll();
@@ -112,6 +113,8 @@ public class ProductServiceImpl{
                         .description(p.getDescription())
                         .totalStock(p.getTotalStock())
                         .ratings(p.getRatings())
+                        .discountedPrice(p.getDiscountedPrice())
+                        .discountPercent(p.getDiscountPercent())
                         .build();
                 decompressProds.add(prod);
             }
@@ -147,6 +150,8 @@ public class ProductServiceImpl{
                         .description(product.getDescription())
                         .totalStock(product.getTotalStock())
                         .ratings(product.getRatings())
+                        .discountPercent(product.getDiscountPercent())
+                        .discountedPrice(product.getDiscountedPrice())
                         .build());
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -160,7 +165,6 @@ public class ProductServiceImpl{
      * @param productId This is the productId of the product
      * @return it return String inside the body of response entity class with appropriate status code
      */
-
     public ResponseEntity deleteProduct(UUID productId) {
         try {
             productDao.deleteById(productId);
@@ -174,7 +178,6 @@ public class ProductServiceImpl{
      * This method can delete all the product from the database hence this operation is only allow for admin User
      * @return it return String inside the body of response entity class with appropriate status code
      */
-
     public ResponseEntity deleteAllProducts() {
         try {
             productDao.deleteAll();
@@ -189,7 +192,6 @@ public class ProductServiceImpl{
      * @param searchText This is a String which contains information about product which need to be searched
      * @return It returns list of product which fully or partially matches with the given string
      */
-
     public ResponseEntity<List<ProductDTO>> getAllSearchedProduct(String searchText) {
         try {
             List<Product> prods = productDao.findBySearchText(searchText);
@@ -211,6 +213,8 @@ public class ProductServiceImpl{
                         .description(p.getDescription())
                         .totalStock(p.getTotalStock())
                         .ratings(p.getRatings())
+                        .discountedPrice(p.getDiscountedPrice())
+                        .discountPercent(p.getDiscountPercent())
                         .build();
                 decompressProds.add(prod);
             }
@@ -225,7 +229,6 @@ public class ProductServiceImpl{
      * @param category It's a String value which contains category name
      * @return It return's list of products which belongs to the category provided in parameter
      */
-
     public ResponseEntity<List<ProductDTO>> getAllProductByCategory(String category) {
         try {
             List<Product> prods = productDao.findByCategory(category);
@@ -247,6 +250,8 @@ public class ProductServiceImpl{
                         .description(p.getDescription())
                         .totalStock(p.getTotalStock())
                         .ratings(p.getRatings())
+                        .discountPercent(p.getDiscountPercent())
+                        .discountedPrice(p.getDiscountedPrice())
                         .build();
                 decompressProds.add(prod);
             }

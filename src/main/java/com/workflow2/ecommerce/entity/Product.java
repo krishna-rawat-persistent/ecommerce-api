@@ -53,4 +53,10 @@ public class Product {
 
     @Column(name="product_totalStock")
     private int totalStock;
+
+    @Column(name="discount_percentage")
+    private double discountPercent;
+
+    @Column(name="discounted_price")
+    private double discountedPrice;
 }

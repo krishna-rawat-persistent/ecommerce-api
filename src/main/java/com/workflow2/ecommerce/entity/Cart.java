@@ -23,8 +23,11 @@ import java.util.List;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_cart_id")
     private Integer userCartId;
-    private double totalAmout;
+
+    @Column(name = "total_amount")
+    private double totalAmount;
 
     @OneToMany(targetEntity = CartDetails.class,cascade = CascadeType.ALL)
     @JoinColumn(name="cd_fk")

@@ -11,16 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -51,7 +48,7 @@ class CartServiceImplTest {
 
     @Test
     void add_to_cart() {
-        CartDetails cartDetails1  = new CartDetails(1,UUID.randomUUID(),0,"#FFFFFF","L");
+        CartDetails cartDetails1  = CartDetails.builder().id(122).productId(UUID.fromString("8b379426-eafa-4285-ad9c-45deb68a05a9")).quantity(2).color("#17B383").size("M").build();
         List<CartDetails> cartDetails = new ArrayList<>();
         cartDetails.add(cartDetails1);
         User user = User.builder()
@@ -61,7 +58,7 @@ class CartServiceImplTest {
                 .phoneNo("0987655432")
                 .role("User")
                 .password("Password123")
-                .cart(Cart.builder().totalAmout(1000).cartDetails(cartDetails).build()).build();
+                .cart(Cart.builder().totalAmount(1000).cartDetails(cartDetails).build()).build();
 
         User user1 = User.builder()
                 .id(UUID.randomUUID())
@@ -70,7 +67,7 @@ class CartServiceImplTest {
                 .phoneNo("0987655432")
                 .role("User")
                 .password("Password123")
-                .cart(Cart.builder().totalAmout(1000).cartDetails(new ArrayList<>()).build()).build();
+                .cart(Cart.builder().totalAmount(1000).cartDetails(new ArrayList<>()).build()).build();
 
 
         when(userDao.findById(any())).thenReturn(java.util.Optional.ofNullable(user)).thenReturn(java.util.Optional.ofNullable(user1));
@@ -79,15 +76,15 @@ class CartServiceImplTest {
 
         when(productService.getProduct(any())).thenReturn(ResponseEntity.ok().body(product1));
 
-        Cart cart = Cart.builder().userCartId(1).cartDetails(cartDetails).totalAmout(1000).build();
+        Cart cart = Cart.builder().userCartId(1).cartDetails(cartDetails).totalAmount(1000).build();
 
         when(cartDao.save(any())).thenReturn(cart);
 
-        service.add_to_cart(cartDetails1, user.getId());
+        service.addToCart(cartDetails1, user);
 
         verify(userDao,times(1)).findById(any());
 
-        service.add_to_cart(cartDetails1, user.getId());
+        service.addToCart(cartDetails1, user);
 
         verify(userDao,times(2)).findById(any());
 

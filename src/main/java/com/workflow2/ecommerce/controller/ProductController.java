@@ -53,6 +53,8 @@ public class ProductController {
                     .size(product.getSize())
                     .color(product.getColor())
                     .ratings(product.getRatings())
+                    .discountPercent(product.getDiscountPercent())
+                    .discountedPrice(product.getPrice()-(product.getPrice() * (product.getDiscountPercent() / 100)))
                     .build();
 
             return productService.saveProduct(product1);
@@ -114,6 +116,8 @@ public class ProductController {
                         .description(product.getDescription())
                         .totalStock(product.getTotalStock())
                         .ratings(product.getRatings())
+                        .discountedPrice(product.getDiscountedPrice())
+                        .discountPercent(product.getDiscountPercent())
                         .build();
                 return productService.updateProduct(product1, id);
             } else {
@@ -128,6 +132,7 @@ public class ProductController {
                         .description(product.getDescription())
                         .totalStock(product.getTotalStock())
                         .ratings(product.getRatings())
+                        .discountedPrice(product.getDiscountedPrice())
                         .build();
                 return productService.updateProduct(product1, id);
             }

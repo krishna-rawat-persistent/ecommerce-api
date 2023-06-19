@@ -16,6 +16,7 @@ public class CartItems {
     private int quantity;
     private byte[] image;
     private String name;
+    private double shippingCharges;
     private double price;
     private String color;
     private String size;
