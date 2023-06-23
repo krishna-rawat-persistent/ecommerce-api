@@ -9,6 +9,12 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+/**
+ * This class is the entity class which contains relation between user and order
+ * @author tejas_badjate
+ * @version v0.0.2
+ */
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

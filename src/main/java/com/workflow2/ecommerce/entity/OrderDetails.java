@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import java.util.UUID;
+
+/**
+ * This class is the entity class for orderDetails
+ * @author tejas_badjate
+ * @version 0.0.2
+ */
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

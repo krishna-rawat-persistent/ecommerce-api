@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * This is the DTO class for all orders
+ * @author tejas_badjate
+ * @version v0.0.2
+ */
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -13,6 +13,11 @@ import java.time.LocalDate;
 
 import java.util.UUID;
 
+/**
+ * This class is the DTO class for order
+ * @author tejas_badjate
+ * @version v0.0.2
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

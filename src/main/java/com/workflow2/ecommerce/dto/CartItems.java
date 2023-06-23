@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+/**
+ * This class is the Response type for cart object
+ * @author krishna_rawat
+ * @version 0.0.1
+ */
 @Data
 @Builder
 @NoArgsConstructor

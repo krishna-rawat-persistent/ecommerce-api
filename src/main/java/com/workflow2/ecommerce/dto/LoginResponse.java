@@ -5,6 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * This class is the response object for Login
+ * @author krishna_rawat
+ * @version 0.0.1
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
