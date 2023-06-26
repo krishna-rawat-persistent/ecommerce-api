@@ -1,5 +1,6 @@
 package com.workflow2.ecommerce.controller;
 
+import com.workflow2.ecommerce.dto.CartItems;
 import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.Cart;
 import com.workflow2.ecommerce.entity.CartDetails;
@@ -60,14 +61,19 @@ class CartControllerTest {
 
     CartDetails cartDetails1;
     List<CartDetails> cartDetails;
+    List<CartItems> cartItemsList;
     List<SimpleGrantedAuthority> roles;
     Cart cart;
     User user;
+    CartItems cartItems;
 
     @BeforeEach
     void setUp() {
         cartDetails1  = CartDetails.builder().id(122).productId(UUID.fromString("8b379426-eafa-4285-ad9c-45deb68a05a9")).quantity(2).color("#17B383").size("M").build();
+        cartItems =CartItems.builder().productId(UUID.fromString("8b379426-eafa-4285-ad9c-45deb68a05a9")).quantity(2).image(null).name("Product1").shippingCharges(100).price(1299).color("#17B383").size("M").build();
         cartDetails = new ArrayList<>();
+        cartItemsList = new ArrayList<>();
+        cartItemsList.add(cartItems);
         cartDetails.add(cartDetails1);
         cart = Cart.builder().userCartId(1).totalAmount(9008.300000000001).cartDetails(cartDetails).build();
         user = User.builder().id(UUID.randomUUID()).name("Test Name").email("testmail@gmail.com").password("Password123").phoneNo("0000000000").cart(cart).build();
@@ -83,7 +89,9 @@ class CartControllerTest {
         cart=null;
         cartDetails1=null;
         cartDetails=null;
+        cartItemsList=null;
         roles=null;
+        cartItems =null;
         reset(userDao);
     }
 
@@ -101,14 +109,13 @@ class CartControllerTest {
                 .andExpect(content().string("Item Added to cart"))
                 .andReturn();
 
-        verify(userDao,times(1)).findByEmail(any());
         verify(cartService,times(1)).addToCart(any(),any());
 
     }
 
     @Test
     void getAllItems() throws Exception {
-        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
+        when(cartService.getAllCart(any())).thenReturn(java.util.Optional.ofNullable(cart));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/cart")
                 .header("Authorization","Bearer "+JwtUtil.generateToken("testmail@gmail.com"))
@@ -116,17 +123,15 @@ class CartControllerTest {
 
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"userCartId\":1,\"totalAmout\":9008.300000000001,\"cartDetails\":[{\"id\":122,\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"color\":\"#17B383\",\"size\":\"M\"}]}"))
+                .andExpect(content().json("{\"userCartId\":1,\"totalAmount\":9008.300000000001,\"cartDetails\":[{\"id\":122,\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"color\":\"#17B383\",\"size\":\"M\"}]}"))
                 .andReturn();
 
-        verify(userDao,times(1)).findByEmail(any());
-        verify(cartDao,times(1)).findById(any());
+        verify(cartService,times(1)).getAllCart(any());
     }
 
     @Test
     void cartDetails() throws Exception {
-        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
-        when(productService.getProduct(any())).thenReturn(ResponseEntity.ok().body(ProductDTO.builder().id(cartDetails1.getProductId()).name("Product1").color(new String[]{"#FFFFFF","#17B383"}).size("M").image(null).price(1299).build()));
+        when(cartService.getAllCartDetails(any())).thenReturn(cartItemsList);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/cartDetails")
                 .header("Authorization","Bearer "+JwtUtil.generateToken("testmail@gmail.com"))
@@ -134,17 +139,15 @@ class CartControllerTest {
 
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"image\":null,\"name\":\"Product1\",\"price\":1299,\"color\":\"#17B383\",\"size\":\"M\"}]"))
+                .andExpect(content().json("[{\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"image\":null,\"name\":\"Product1\",\"shippingCharges\":100, \"price\":1299,\"color\":\"#17B383\",\"size\":\"M\"}]"))
                 .andReturn();
 
-        verify(userDao,times(1)).findByEmail(any());
-        verify(cartDao,times(1)).findById(any());
-        verify(productService, times(1)).getProduct(any());
+        verify(cartService,times(1)).getAllCartDetails(any());
     }
 
     @Test
     void cartDetailById() throws Exception {
-        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
+        when(cartService.getCartDetailsById(any(),any())).thenReturn(cartItems);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/cartDetails/8b379426-eafa-4285-ad9c-45deb68a05a9")
                 .header("Authorization","Bearer "+JwtUtil.generateToken("testmail@gmail.com"))
@@ -152,19 +155,19 @@ class CartControllerTest {
 
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"color\":\"#17B383\",\"size\":\"M\"}"))
+                .andExpect(content().json("{\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"image\":null,\"name\":\"Product1\",\"shippingCharges\":100, \"price\":1299,\"color\":\"#17B383\",\"size\":\"M\"}"))
                 .andReturn();
 
-        verify(userDao,times(1)).findByEmail(any());
-        verify(cartDao,times(1)).findById(any());
+        verify(cartService,times(1)).getCartDetailsById(any(),any());
     }
 
     @Test
     void updateCartDetails() throws Exception {
-        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
-        when(cartDao.save(any())).thenReturn(cart);
-        when(cartDetailDao.save(any())).thenReturn(cartDetails1);
-        when(productService.getProduct(any())).thenReturn(ResponseEntity.ok().body(ProductDTO.builder().id(cartDetails1.getProductId()).name("Product1").color(new String[]{"#FFFFFF","#17B383"}).size("M").image(null).price(1299).build()));
+//        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
+//        when(cartDao.save(any())).thenReturn(cart);
+//        when(cartDetailDao.save(any())).thenReturn(cartDetails1);
+//        when(productService.getProduct(any())).thenReturn(ResponseEntity.ok().body(ProductDTO.builder().id(cartDetails1.getProductId()).name("Product1").color(new String[]{"#FFFFFF","#17B383"}).size("M").image(null).price(1299).build()));
+        when(cartService.updateCartDetails(any(),any())).thenReturn(cartItems);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/cartDetails")
                 .content("{\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"color\":\"#17B383\",\"size\":\"M\"}")
@@ -173,22 +176,23 @@ class CartControllerTest {
 
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"id\":122,\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"color\":\"#17B383\",\"size\":\"M\"}"))
+                .andExpect(content().json("{\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"image\":null,\"name\":\"Product1\",\"shippingCharges\":100, \"price\":1299,\"color\":\"#17B383\",\"size\":\"M\"}"))
                 .andReturn();
 
-        verify(userDao,times(1)).findByEmail(any());
-        verify(cartDao,times(1)).save(any());
-        verify(cartDetailDao,times(1)).save(any());
-        verify(productService,times(1)).getProduct(any());
+//        verify(userDao,times(1)).findByEmail(any());
+//        verify(cartDao,times(1)).save(any());
+//        verify(cartDetailDao,times(1)).save(any());
+//        verify(productService,times(1)).getProduct(any());
+        verify(cartService,times(1)).updateCartDetails(any(),any());
     }
 
     @Test
     void cartDetailDeleteById() throws Exception {
-        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
-        when(cartDao.save(any())).thenReturn(cart);
-        doNothing().when(cartDetailDao).deleteById(any());
-        when(productService.getProduct(any())).thenReturn(ResponseEntity.ok().body(ProductDTO.builder().id(cartDetails1.getProductId()).name("Product1").color(new String[]{"#FFFFFF","#17B383"}).size("M").image(null).price(1299).build()));
-
+//        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
+//        when(cartDao.save(any())).thenReturn(cart);
+//        doNothing().when(cartDetailDao).deleteById(any());
+//        when(productService.getProduct(any())).thenReturn(ResponseEntity.ok().body(ProductDTO.builder().id(cartDetails1.getProductId()).name("Product1").color(new String[]{"#FFFFFF","#17B383"}).size("M").image(null).price(1299).build()));
+        when(cartService.deleteCartDetailsById(any(),any())).thenReturn(new ArrayList<>());
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/cartDetails/8b379426-eafa-4285-ad9c-45deb68a05a9")
                 .header("Authorization","Bearer "+JwtUtil.generateToken("testmail@gmail.com"))
                 .contentType(MediaType.APPLICATION_JSON);
@@ -198,16 +202,18 @@ class CartControllerTest {
                 .andExpect(content().json("[]"))
                 .andReturn();
 
-        verify(userDao,times(1)).findByEmail(any());
-        verify(cartDao,times(1)).save(any());
-        verify(cartDetailDao,times(1)).deleteById(any());
-        verify(productService,times(1)).getProduct(any());
+//        verify(userDao,times(1)).findByEmail(any());
+//        verify(cartDao,times(1)).save(any());
+//        verify(cartDetailDao,times(1)).deleteById(any());
+//        verify(productService,times(1)).getProduct(any());
+        verify(cartService,times(1)).deleteCartDetailsById(any(),any());
     }
 
     @Test
     void deleteAllCart() throws Exception {
-        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
-        when(cartDao.save(any())).thenReturn(Cart.builder().build());
+//        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
+//        when(cartDao.save(any())).thenReturn(Cart.builder().build());
+        when(cartService.deleteAllCartDetails(any())).thenReturn("Cart is clear");
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/cart")
                 .header("Authorization","Bearer "+JwtUtil.generateToken("testmail@gmail.com"))
@@ -218,8 +224,10 @@ class CartControllerTest {
                 .andExpect(content().string("Cart is clear"))
                 .andReturn();
 
-        verify(userDao,times(1)).findByEmail(any());
-        verify(cartDao,times(1)).save(any());
-        verify(cartDao,times(1)).findById(any());
+//        verify(userDao,times(1)).findByEmail(any());
+//        verify(cartDao,times(1)).save(any());
+//        verify(cartDao,times(1)).findById(any());
+
+        verify(cartService,times(1)).deleteAllCartDetails(any());
     }
 }

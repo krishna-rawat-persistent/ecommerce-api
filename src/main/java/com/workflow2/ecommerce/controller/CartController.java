@@ -35,20 +35,6 @@ public class CartController {
     UserDao userDao;
 
     /**
-     * This method help us to find user from the user from the request body
-     * @param httpServletRequest It is the request body
-     * @return It return the user we have find from the token
-     */
-    private User getUser(HttpServletRequest httpServletRequest){
-        String data = httpServletRequest.getHeader("Authorization");
-        String token = data.substring(7);
-        String name = JwtUtil.extractUsername(token);
-        User user = userDao.findByEmail(name);
-        return user;
-    }
-
-
-    /**
      * This method adds items/products to the cart
      * @param cartDetails It has all the item and cart details
      * @param httpServletRequest It contains request body
