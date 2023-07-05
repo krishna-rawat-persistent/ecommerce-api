@@ -23,7 +23,7 @@ import java.util.UUID;
 @Data
 @Builder
 public class OrderDto {
-    UUID orderId;
+    String  orderId;
     String userName;
     String email;
     String contactNo;

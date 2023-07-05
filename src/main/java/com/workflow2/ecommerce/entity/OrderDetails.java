@@ -55,4 +55,8 @@ public class OrderDetails {
     @Column(name="size")
     private String size;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id",referencedColumnName = "orderId")
+    private UserOrderCommon userOrderCommon;
+
 }

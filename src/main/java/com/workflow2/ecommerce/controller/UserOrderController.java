@@ -6,6 +6,8 @@ import com.workflow2.ecommerce.entity.User;
 import com.workflow2.ecommerce.services.CartServiceImpl;
 import com.workflow2.ecommerce.services.UserOrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,10 +35,14 @@ public class UserOrderController{
      * @return It returns success message for order
      */
     @PostMapping("/placeorder/{totalAmount}/{address}")
-    public String placeOrder(HttpServletRequest httpServletRequest, @PathVariable double totalAmount,@PathVariable String address){
+    @ResponseBody
+    public ResponseEntity<?> placeOrder(HttpServletRequest httpServletRequest, @PathVariable double totalAmount, @PathVariable String address){
         User user = cartService.getUser(httpServletRequest);
         String success = userOrderService.placeOrder(user,totalAmount,address);
-        return  success;
+        if(success.startsWith("Success")){
+            return ResponseEntity.ok(success.substring(8));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(success);
     }
 
     /**
@@ -59,7 +65,7 @@ public class UserOrderController{
      * @return It returns order whose orderId and trackingId is provided
      */
     @GetMapping("/trackorder/{orderId}/{trackingId}")
-    public OrderDto trackOrder(HttpServletRequest httpServletRequest,@PathVariable UUID orderId,@PathVariable UUID trackingId){
+    public OrderDto trackOrder(HttpServletRequest httpServletRequest,@PathVariable String orderId,@PathVariable UUID trackingId){
         User user = cartService.getUser(httpServletRequest);
         return userOrderService.trackOrder(user,orderId,trackingId);
     }

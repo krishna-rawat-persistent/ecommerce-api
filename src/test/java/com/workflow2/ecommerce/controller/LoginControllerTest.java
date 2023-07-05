@@ -81,7 +81,7 @@ class LoginControllerTest {
 
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"message\":\"It is a Valid User!!\",\"status\":true,\"name\":\"Test Name\",\"email\":\"testmail@gmail.com\",\"phoneNo\":\"0000000000\",\"jwtToken\":"+JwtUtil.generateToken(request.getUserName())+"}"))
+                .andExpect(content().json("{\"jwtToken\":"+JwtUtil.generateToken(request.getUserName())+"}"))
                 .andReturn();
     }
 

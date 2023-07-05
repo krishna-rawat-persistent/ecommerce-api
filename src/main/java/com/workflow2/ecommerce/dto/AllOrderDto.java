@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class AllOrderDto {
-    UUID orderId;
+    String orderId;
     String status;
     String deliveryDate;
     String orderedDate;

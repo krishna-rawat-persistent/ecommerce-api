@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * This class is the entity class which contains relation between user and order
@@ -22,11 +21,10 @@ import java.util.UUID;
 @Entity
 public class UserOrderCommon {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID OrderId;
-    double totalAmount;
+    private String orderId;
 
-    @OneToMany(targetEntity = OrderDetails.class,cascade = CascadeType.ALL)
-    @JoinColumn(name = "Order_id")
+    private double totalAmount;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userOrderCommon")
     private List<OrderDetails> orderDetailsList = new ArrayList<>();
 }

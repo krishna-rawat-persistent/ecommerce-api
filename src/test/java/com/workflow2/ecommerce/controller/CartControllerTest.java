@@ -45,16 +45,10 @@ class CartControllerTest {
     CartServiceImpl cartService;
 
     @MockBean
-    ProductServiceImpl productService;
-
-    @MockBean
     UserDao userDao;
 
     @MockBean
-    CartDao cartDao;
-
-    @MockBean
-    CartDetailDao cartDetailDao;
+    ProductServiceImpl productService;
 
     @MockBean
     CustomUserDetailsService customUserDetailsService;
@@ -163,10 +157,6 @@ class CartControllerTest {
 
     @Test
     void updateCartDetails() throws Exception {
-//        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
-//        when(cartDao.save(any())).thenReturn(cart);
-//        when(cartDetailDao.save(any())).thenReturn(cartDetails1);
-//        when(productService.getProduct(any())).thenReturn(ResponseEntity.ok().body(ProductDTO.builder().id(cartDetails1.getProductId()).name("Product1").color(new String[]{"#FFFFFF","#17B383"}).size("M").image(null).price(1299).build()));
         when(cartService.updateCartDetails(any(),any())).thenReturn(cartItems);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/cartDetails")
@@ -179,19 +169,11 @@ class CartControllerTest {
                 .andExpect(content().json("{\"productId\":\"8b379426-eafa-4285-ad9c-45deb68a05a9\",\"quantity\":2,\"image\":null,\"name\":\"Product1\",\"shippingCharges\":100, \"price\":1299,\"color\":\"#17B383\",\"size\":\"M\"}"))
                 .andReturn();
 
-//        verify(userDao,times(1)).findByEmail(any());
-//        verify(cartDao,times(1)).save(any());
-//        verify(cartDetailDao,times(1)).save(any());
-//        verify(productService,times(1)).getProduct(any());
         verify(cartService,times(1)).updateCartDetails(any(),any());
     }
 
     @Test
     void cartDetailDeleteById() throws Exception {
-//        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
-//        when(cartDao.save(any())).thenReturn(cart);
-//        doNothing().when(cartDetailDao).deleteById(any());
-//        when(productService.getProduct(any())).thenReturn(ResponseEntity.ok().body(ProductDTO.builder().id(cartDetails1.getProductId()).name("Product1").color(new String[]{"#FFFFFF","#17B383"}).size("M").image(null).price(1299).build()));
         when(cartService.deleteCartDetailsById(any(),any())).thenReturn(new ArrayList<>());
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/cartDetails/8b379426-eafa-4285-ad9c-45deb68a05a9")
                 .header("Authorization","Bearer "+JwtUtil.generateToken("testmail@gmail.com"))
@@ -202,17 +184,11 @@ class CartControllerTest {
                 .andExpect(content().json("[]"))
                 .andReturn();
 
-//        verify(userDao,times(1)).findByEmail(any());
-//        verify(cartDao,times(1)).save(any());
-//        verify(cartDetailDao,times(1)).deleteById(any());
-//        verify(productService,times(1)).getProduct(any());
         verify(cartService,times(1)).deleteCartDetailsById(any(),any());
     }
 
     @Test
     void deleteAllCart() throws Exception {
-//        when(cartDao.findById(any())).thenReturn(java.util.Optional.ofNullable(cart));
-//        when(cartDao.save(any())).thenReturn(Cart.builder().build());
         when(cartService.deleteAllCartDetails(any())).thenReturn("Cart is clear");
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/cart")
@@ -223,10 +199,6 @@ class CartControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Cart is clear"))
                 .andReturn();
-
-//        verify(userDao,times(1)).findByEmail(any());
-//        verify(cartDao,times(1)).save(any());
-//        verify(cartDao,times(1)).findById(any());
 
         verify(cartService,times(1)).deleteAllCartDetails(any());
     }

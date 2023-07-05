@@ -1,11 +1,15 @@
 package com.workflow2.ecommerce.services;
 
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
 import com.workflow2.ecommerce.dto.AllOrderDto;
 import com.workflow2.ecommerce.dto.CartItems;
 import com.workflow2.ecommerce.dto.OrderDto;
 import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.*;
 import com.workflow2.ecommerce.repository.*;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,17 +69,44 @@ public class UserOrderServiceImpl{
     public String placeOrder(User user, double totalAmount, String address) {
         List<CartItems> cartDetailsList =  cartService.getAllCartDetails(user);
 
-        List<UserOrderCommon> userOrderCommonList = new ArrayList<>();
+        if(cartDetailsList.isEmpty()){
+            return "There is no item in cart!!";
+        }
+        if(totalAmount==0){
+            return "Total Amount should not be 0";
+        }
+        RazorpayClient razorpayClient;
+        try {
+            razorpayClient = new RazorpayClient("rzp_test_DHE0D98Cg7lMgY", "XT1mCZyC4dd8r1cjkp11mM7o");
+        } catch (RazorpayException e) {
+            return "Unable to make connection with Razorpay client";
+        }
+
+        JSONObject options = new JSONObject();
+        options.put("amount", Math.round(totalAmount));
+        options.put("currency", "INR");
+        options.put("receipt", "txn_"+totalAmount);
+        Order order;
+        try {
+             order = razorpayClient.orders.create(options);
+        } catch (RazorpayException e) {
+            return "Unable to create order because of "+e.getMessage();
+        }
         List<OrderDetails> orderDetailsList = new ArrayList<>();
 
-        UserOrderCommon userOrderCommon = new UserOrderCommon();
+        UserOrderCommon userOrderCommon1 = new UserOrderCommon();
+        userOrderCommon1.setOrderId(order.get("id"));
+        userOrderCommon1.setTotalAmount(totalAmount);
 
-        userOrderCommon.setTotalAmount(totalAmount);
+        UserOrderCommon userOrderCommon = userOrderCommonDao.save(userOrderCommon1);
+
+        OrderDetails orderDetails;
+
         int cartDetailsIndex;
         for(cartDetailsIndex=0;cartDetailsIndex<cartDetailsList.size();cartDetailsIndex++){
             CartItems cartItems = cartDetailsList.get(cartDetailsIndex);
             ProductDTO product = productService.getProduct(cartItems.getProductId()).getBody();
-            OrderDetails orderDetails = new OrderDetails();
+            orderDetails = new OrderDetails();
             orderDetails.setAddress(address);
             orderDetails.setColor(cartItems.getColor());
             orderDetails.setSize(cartItems.getSize());
@@ -86,27 +117,20 @@ public class UserOrderServiceImpl{
             LocalDate date = LocalDate.now();
             orderDetails.setDate(date.toString());
             orderDetails.setDeliveryDate(date.plusDays(7).toString());
-            orderDetails.setTotalAmount(product.getDiscountedPrice()+finalShippingCharges);
+            orderDetails.setTotalAmount((product != null ? product.getDiscountedPrice() : 0) +finalShippingCharges);
             orderDetails.setProductId(cartItems.getProductId());
-
-            if (!userOrderCommon.getOrderDetailsList().isEmpty()) {
-                orderDetailsList = userOrderCommon.getOrderDetailsList();
-            }
+            orderDetails.setUserOrderCommon(userOrderCommon);
             orderDetailsList.add(orderDetails);
-            if (!user.getUserOrders().isEmpty()) {
-                userOrderCommonList = user.getUserOrders();
-            }
-            userOrderCommonList.add(userOrderCommon);
-
+            user.getUserOrders().add(userOrderCommon);
         }
         userOrderCommon.setOrderDetailsList(orderDetailsList);
-        user.setUserOrders(userOrderCommonList);
         userOrderCommonDao.save(userOrderCommon);
+        userOrderCommonDao.flush();
         userDao.save(user);
         Cart cart = cartDao.findById(user.getCart().getUserCartId()).get();
         cart.getCartDetails().clear();
         cartDao.save(cart);
-        return "Success";
+        return "Success "+order.get("id").toString();
     }
 
     /**
@@ -149,7 +173,7 @@ public class UserOrderServiceImpl{
      * @param trackingId It is the tracking id for a particular order, generated while placing order
      * @return It return particular order whose order id and tracking id
      */
-    public OrderDto trackOrder(User user, UUID orderId,UUID trackingId)
+    public OrderDto trackOrder(User user, String orderId,UUID trackingId)
     {
         UserOrderCommon userOrderCommon = userOrderCommonDao.findById(orderId).get();
         List<OrderDetails> orderDetails = userOrderCommon.getOrderDetailsList();
