@@ -33,16 +33,25 @@ public class UserOrderController{
      * @param totalAmount It is the total amount for the order
      * @param address It is the address for the order
      * @return It returns success message for order
+     * @throws Exception
      */
     @PostMapping("/placeorder/{totalAmount}/{address}")
     @ResponseBody
-    public ResponseEntity<?> placeOrder(HttpServletRequest httpServletRequest, @PathVariable double totalAmount, @PathVariable String address){
+    public ResponseEntity<?> placeOrder(HttpServletRequest httpServletRequest, @PathVariable double totalAmount, @PathVariable String address) throws Exception{
         User user = cartService.getUser(httpServletRequest);
+        try{
         String success = userOrderService.placeOrder(user,totalAmount,address);
         if(success.startsWith("Success")){
             return ResponseEntity.ok(success.substring(8));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(success);
+    }catch(NullPointerException e){
+               return  ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Out Of stock");
+
+    }
+    catch(Exception e){
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order quantity exceeds total stock! please decrease quantity");
+    }
     }
 
     /**
