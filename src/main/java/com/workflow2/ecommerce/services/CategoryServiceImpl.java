@@ -60,7 +60,7 @@ public class CategoryServiceImpl  {
 	/**
 	 * Using this method we can delete a particular category by given name
 	 * @param name This is a String value which contains name of category we wanted to delete
-	 * @return It returns success message
+	 * @return It returns msg message
 	 */
 
 	public String deleteCategoryById(String name) {

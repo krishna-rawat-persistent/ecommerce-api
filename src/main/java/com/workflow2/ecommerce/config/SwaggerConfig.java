@@ -39,7 +39,7 @@ public class SwaggerConfig {
 
     /**
      * This method returns Security References that is required to build Security Context
-     * @return it return's list of Security References
+     * @return it returns list of Security References
      */
     private List<SecurityReference> defaultAuth() {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
