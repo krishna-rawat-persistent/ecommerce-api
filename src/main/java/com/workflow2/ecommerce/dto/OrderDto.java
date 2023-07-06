@@ -29,7 +29,7 @@ public class OrderDto {
     String contactNo;
     int quantity;
     String deliveryAddress;
-    String status;
+    Integer status;
     UUID productId;
     String productName;
     byte [] productImage;

@@ -28,7 +28,7 @@ public class ProductDTO {
     private byte[] image = null;
     private String description;
     private int totalStock;
-    private String subcategory;
+
     private double ratings;
     private double discountedPrice;
     private double discountPercent;

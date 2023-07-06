@@ -2,6 +2,7 @@ package com.workflow2.ecommerce.controller;
 
 import com.workflow2.ecommerce.dto.AllOrderDto;
 import com.workflow2.ecommerce.dto.OrderDto;
+import com.workflow2.ecommerce.dto.PlaceOrderDTO;
 import com.workflow2.ecommerce.entity.User;
 import com.workflow2.ecommerce.services.CartServiceImpl;
 import com.workflow2.ecommerce.services.UserOrderServiceImpl;
@@ -30,15 +31,15 @@ public class UserOrderController{
     /**
      * This controller method have endpoint to place a order
      * @param httpServletRequest It is the request header
-     * @param totalAmount It is the total amount for the order
-     * @param address It is the address for the order
+     * @param placeOrderDTO it consist of totalAmount and address required while placing order
      * @return It returns success message for order
      */
-    @PostMapping("/placeorder/{totalAmount}/{address}")
+    @PostMapping("/placeorder")
     @ResponseBody
-    public ResponseEntity<?> placeOrder(HttpServletRequest httpServletRequest, @PathVariable double totalAmount, @PathVariable String address){
+    public ResponseEntity<?> placeOrder(HttpServletRequest httpServletRequest, @RequestBody PlaceOrderDTO placeOrderDTO){
         User user = cartService.getUser(httpServletRequest);
-        String success = userOrderService.placeOrder(user,totalAmount,address);
+        System.out.println("address : " + placeOrderDTO.getAddress());
+        String success = userOrderService.placeOrder(user, placeOrderDTO.getTotalAmount(), placeOrderDTO.getAddress());
         if(success.startsWith("Success")){
             return ResponseEntity.ok(success.substring(8));
         }

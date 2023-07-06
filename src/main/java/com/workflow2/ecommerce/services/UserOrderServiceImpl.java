@@ -17,6 +17,7 @@ import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -41,6 +42,14 @@ public class UserOrderServiceImpl{
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    CartDetailDao cartDetailDao;
+
+    public int getRandomNumberUsingNextInt(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
+    }
 
     /**
      * This method returns Index of OrderDetailsList for particular order details object
@@ -96,6 +105,7 @@ public class UserOrderServiceImpl{
 
         UserOrderCommon userOrderCommon1 = new UserOrderCommon();
         userOrderCommon1.setOrderId(order.get("id"));
+        userOrderCommon1.setAddress(address);
         userOrderCommon1.setTotalAmount(totalAmount);
 
         UserOrderCommon userOrderCommon = userOrderCommonDao.save(userOrderCommon1);
@@ -111,12 +121,12 @@ public class UserOrderServiceImpl{
             orderDetails.setColor(cartItems.getColor());
             orderDetails.setSize(cartItems.getSize());
             orderDetails.setQuantity(cartItems.getQuantity());
-            orderDetails.setStatus("Order Placed");
+            orderDetails.setStatus(getRandomNumberUsingNextInt(1,6));
             double finalShippingCharges = cartItems.getShippingCharges()/cartDetailsList.size();
             orderDetails.setShippingCharges(finalShippingCharges);
             LocalDate date = LocalDate.now();
             orderDetails.setDate(date.toString());
-            orderDetails.setDeliveryDate(date.plusDays(7).toString());
+            orderDetails.setDeliveryDate(date.plusDays(getRandomNumberUsingNextInt(3,16)).toString());
             orderDetails.setTotalAmount((product != null ? product.getDiscountedPrice() : 0) +finalShippingCharges);
             orderDetails.setProductId(cartItems.getProductId());
             orderDetails.setUserOrderCommon(userOrderCommon);
@@ -127,8 +137,17 @@ public class UserOrderServiceImpl{
         userOrderCommonDao.save(userOrderCommon);
         userOrderCommonDao.flush();
         userDao.save(user);
+
         Cart cart = cartDao.findById(user.getCart().getUserCartId()).get();
+        List<CartDetails> cartDetailsList1 = cart.getCartDetails();
+        List<Integer> cartDetailsIdList = new ArrayList<>();
+        for(int i=0;i<cartDetailsList1.size();i++){
+            cartDetailsIdList.add(cartDetailsList1.get(i).getId());
+        }
         cart.getCartDetails().clear();
+        for(int i=0;i<cartDetailsIdList.size();i++){
+            cartDetailDao.deleteById(cartDetailsIdList.get(i));
+        }
         cartDao.save(cart);
         return "Success "+order.get("id").toString();
     }

@@ -35,7 +35,7 @@ public class OrderDetails {
     private double totalAmount=0;
 
     @Column(name = "Status")
-    private String status;
+    private Integer status;
 
     @Column(name="ordered_date")
     private String date;
