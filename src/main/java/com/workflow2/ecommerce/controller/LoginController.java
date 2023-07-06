@@ -65,7 +65,7 @@ public class LoginController {
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(LoginResponse.builder().message("Invalid userName/Password!!").status(false).email(authRequest.getUserName()).build());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(LoginResponse.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).name(user.getName()).phoneNo(user.getPhoneNo()).jwtToken(JwtUtil.generateToken(authRequest.getUserName())).build());
+        return ResponseEntity.status(HttpStatus.OK).body(LoginResponse.builder().message("It is a Valid User!!").status(true).email(authRequest.getUserName()).name(user.getName()).phoneNo(user.getPhoneNo()).address(user.getAddress()).jwtToken(JwtUtil.generateToken(authRequest.getUserName())).build());
 
     }
 }

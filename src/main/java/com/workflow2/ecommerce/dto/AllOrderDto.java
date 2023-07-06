@@ -19,7 +19,7 @@ import java.util.UUID;
 @Data
 public class AllOrderDto {
     String orderId;
-    String status;
+    Integer status;
     String deliveryDate;
     String orderedDate;
     byte[] image;

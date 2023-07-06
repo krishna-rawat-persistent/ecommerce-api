@@ -79,6 +79,7 @@ public class UserServiceImpl {
                         .role("User")
                         .password(passwordEncoder.encode(register.getPassword()))
                         .cart(new Cart())
+                        .address(register.getAddress())
                         .build());
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Response.builder().message("Some exception occurred").status(false).build());

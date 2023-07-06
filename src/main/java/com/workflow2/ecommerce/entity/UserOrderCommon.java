@@ -24,7 +24,7 @@ public class UserOrderCommon {
     private String orderId;
 
     private double totalAmount;
-
+    private String address;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userOrderCommon")
     private List<OrderDetails> orderDetailsList = new ArrayList<>();
 }
