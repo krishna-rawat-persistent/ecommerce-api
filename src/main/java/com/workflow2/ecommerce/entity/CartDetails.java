@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Builder
+@Table(name="cart_details")
 public class CartDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -22,5 +22,6 @@ public class Register {
     private String phoneNo;
     private String role;
     private String password;
+    private String address;
     private Cart cart;
 }

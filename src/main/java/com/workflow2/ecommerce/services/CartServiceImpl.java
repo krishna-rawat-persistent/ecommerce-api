@@ -228,7 +228,16 @@ public class CartServiceImpl {
 
         int cartId = user.getCart().getUserCartId();
         Cart cart = cartDao.findById(cartId).get();
+        List<CartDetails> cartDetailsList = cart.getCartDetails();
+        List<Integer> cartDetailsIdList = new ArrayList<>();
+        for(int i=0;i<cartDetailsIdList.size();i++){
+            cartDetailsIdList.add(cartDetailsList.get(i).getId());
+        }
         cart.getCartDetails().clear();
+        for(int i=0;i<cartDetailsIdList.size();i++){
+            System.out.println(cartDetailsIdList.get(i));
+            cartDetailDao.deleteById(cartDetailsIdList.get(i));
+        }
         cart.setTotalAmount(0);
         cartDao.save(cart);
         return "Cart is clear";
