@@ -89,7 +89,7 @@ public class UserOrderServiceImpl{
             else if(product.getTotalStock()>=cartItems.getQuantity()){
             product.setTotalStock(product.getTotalStock()-cartItems.getQuantity());
             }else{
-                throw new Exception("Order quantity exceeds total stock! please decrease quantity");
+                throw new Exception("Order quantity exceeds total stock! please decrease the quantity");
             }
             productDao.save(product);
         
