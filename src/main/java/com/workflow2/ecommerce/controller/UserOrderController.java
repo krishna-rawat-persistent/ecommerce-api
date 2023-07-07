@@ -33,16 +33,25 @@ public class UserOrderController{
      * @param httpServletRequest It is the request header
      * @param placeOrderDTO it consist of totalAmount and address required while placing order
      * @return It returns success message for order
+     * @throws Exception
      */
     @PostMapping("/placeorder")
     @ResponseBody
     public ResponseEntity<?> placeOrder(HttpServletRequest httpServletRequest, @RequestBody PlaceOrderDTO placeOrderDTO){
         User user = cartService.getUser(httpServletRequest);
+        try{
         String success = userOrderService.placeOrder(user, placeOrderDTO.getTotalAmount(), placeOrderDTO.getAddress(), placeOrderDTO.getOrderId());
         if(success.startsWith("Success")){
             return ResponseEntity.ok(success);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(success);
+    }catch(NullPointerException e){
+               return  ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Out Of stock");
+
+    }
+    catch(Exception e){
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order quantity exceeds total stock! please decrease quantity");
+    }
     }
 
     /**

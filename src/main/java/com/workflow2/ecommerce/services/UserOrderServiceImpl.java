@@ -11,6 +11,7 @@ import com.workflow2.ecommerce.entity.*;
 import com.workflow2.ecommerce.repository.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,6 +40,9 @@ public class UserOrderServiceImpl{
 
     @Autowired
     ProductServiceImpl productService;
+
+    @Autowired
+    ProductDao productDao;
 
     @Autowired
     UserDao userDao;
@@ -75,7 +79,7 @@ public class UserOrderServiceImpl{
      * @param address it is the address of that user
      * @return It returns a success message
      */
-    public String placeOrder(User user, double totalAmount, String address, String orderId) {
+    public String placeOrder(User user, double totalAmount, String address, String orderId) throws Exception {
         List<CartItems> cartDetailsList =  cartService.getAllCartDetails(user);
 
         if(cartDetailsList.isEmpty()){
@@ -83,6 +87,19 @@ public class UserOrderServiceImpl{
         }
         if(totalAmount==0){
             return "Total Amount should not be 0";
+        }
+        for(CartItems cartItems:cartDetailsList){
+            Product product=productDao.getReferenceById(cartItems.getProductId());
+            if(product.getTotalStock() <= 0){
+            throw new NullPointerException();
+            }
+            else if(product.getTotalStock()>=cartItems.getQuantity()){
+            product.setTotalStock(product.getTotalStock()-cartItems.getQuantity());
+            }else{
+                throw new Exception("Order quantity exceeds total stock! please decrease the quantity");
+            }
+            productDao.save(product);
+        
         }
         List<OrderDetails> orderDetailsList = new ArrayList<>();
 
