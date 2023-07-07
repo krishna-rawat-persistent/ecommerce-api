@@ -85,7 +85,7 @@ public class ProductServiceImpl{
                     .discountPercent(prod.get().getDiscountPercent())
                     .build());
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
     }
 

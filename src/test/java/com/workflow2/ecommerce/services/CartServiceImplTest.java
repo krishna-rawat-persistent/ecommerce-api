@@ -1,5 +1,6 @@
 package com.workflow2.ecommerce.services;
 
+import com.workflow2.ecommerce.dto.CartDetailsDTO;
 import com.workflow2.ecommerce.dto.CartItems;
 import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.Cart;
@@ -17,14 +18,10 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -96,7 +93,7 @@ class CartServiceImplTest {
     @Test
     void add_to_cart() {
         when(cartDao.save(any())).thenReturn(cart);
-        CartDetails cartDetails1 = CartDetails.builder().id(122).productId(UUID.fromString("8b379426-eafa-4285-ad9c-45deb68a05a9")).build();
+        CartDetailsDTO cartDetails1 = CartDetailsDTO.builder().productId(UUID.fromString("8b379426-eafa-4285-ad9c-45deb68a05a9")).build();
         service.addToCart(cartDetails1, user);
 
         verify(cartDao,times(1)).save(any());
@@ -108,7 +105,7 @@ class CartServiceImplTest {
     void getAllCart() {
         Optional<Cart> res = service.getAllCart(user);
         verify(cartDao,times(1)).findById(any());
-        assertThat(res.get().getUserCartId()).isEqualTo(1);
+        assertThat(Objects.requireNonNull(res.orElse(null)).getUserCartId()).isEqualTo(1);
     }
 
     @Test
@@ -118,7 +115,7 @@ class CartServiceImplTest {
         verify(cartDao,times(1)).findById(any());
         verify(productService,times(1)).getProduct(any());
 
-        assertThat(res.size()).isGreaterThan(0);
+        assertThat(res.size()).isPositive();
     }
 
     @Test
@@ -162,8 +159,7 @@ class CartServiceImplTest {
         verify(cartDao,times(1)).save(any());
         verify(cartDetailDao,times(1)).deleteById(any());
 
-        assertThat(res).isNotNull();
-        assertThat(res.size()).isEqualTo(2);
+        assertThat(res).isNotNull().hasSize(2);
     }
 
     @Test

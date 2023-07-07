@@ -39,19 +39,11 @@ public class UserOrderController{
     @ResponseBody
     public ResponseEntity<?> placeOrder(HttpServletRequest httpServletRequest, @RequestBody PlaceOrderDTO placeOrderDTO){
         User user = cartService.getUser(httpServletRequest);
-        try{
         String success = userOrderService.placeOrder(user, placeOrderDTO.getTotalAmount(), placeOrderDTO.getAddress(), placeOrderDTO.getOrderId());
         if(success.startsWith("Success")){
             return ResponseEntity.ok(success);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(success);
-    }catch(NullPointerException e){
-               return  ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Out Of stock");
-
-    }
-    catch(Exception e){
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order quantity exceeds total stock! please decrease quantity");
-    }
     }
 
     /**

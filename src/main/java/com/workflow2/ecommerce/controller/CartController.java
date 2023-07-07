@@ -1,5 +1,6 @@
 package com.workflow2.ecommerce.controller;
 
+import com.workflow2.ecommerce.dto.CartDetailsDTO;
 import com.workflow2.ecommerce.dto.CartItems;
 import com.workflow2.ecommerce.entity.Cart;
 import com.workflow2.ecommerce.entity.CartDetails;
@@ -41,7 +42,7 @@ public class CartController {
      * @return It return string value which contains success message
      */
    @PostMapping("/addtocart")
-    public String addToCart(@RequestBody CartDetails cartDetails, HttpServletRequest httpServletRequest){
+    public String addToCart(@RequestBody CartDetailsDTO cartDetails, HttpServletRequest httpServletRequest){
         User user1 = service.getUser(httpServletRequest);
         return service.addToCart(cartDetails,user1);
     }

@@ -1,5 +1,6 @@
 package com.workflow2.ecommerce.services;
 
+import com.workflow2.ecommerce.dto.CartDetailsDTO;
 import com.workflow2.ecommerce.dto.CartItems;
 import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.Cart;
@@ -14,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class contains implementations of all the methods to perform operations on cart functionality
@@ -42,9 +40,9 @@ public class CartServiceImpl {
     ProductServiceImpl productService;
 
     /**
-     * This method help us to find user from the user from the request body
+     * This method help us find user from the user from the request body
      * @param httpServletRequest It is the request body
-     * @return It return the user we have find from the token
+     * @return It returns the user we have found from the token
      */
     public User getUser(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("Authorization").substring(7);
@@ -53,7 +51,7 @@ public class CartServiceImpl {
     }
 
     /**
-     * This method help us to find the index of a cartDetails whose product is is give
+     * This method help us find the index of a cartDetails whose product is give
      * @param productId It is the productId of a product whose cartDetails we wanted to find
      * @param cartDetailsList It is the list of all the cartDetails
      * @return It returns the index of cartDetails whose productId is provided
@@ -88,34 +86,44 @@ public class CartServiceImpl {
     }
 
     /**
-     * This method help us to add a item to cart
+     * This method help us to add an item to cart
      * @param cartDetails It is the cartDetails for particular cart
      * @param user This parameter is the user in which we need to add an item
      * @return This returns a success message
      */
-    public String addToCart(CartDetails cartDetails, User user) {
+    public String addToCart(CartDetailsDTO cartDetails, User user) {
         Cart cart = user.getCart();
-        ProductDTO product = productService.getProduct(cartDetails.getProductId()).getBody();
-
-        double totalAmount = cart.getTotalAmount();
-        totalAmount = totalAmount + (cartDetails.getQuantity() * product.getPrice());
-
-        cart.setTotalAmount(totalAmount);
-        if(cartDetails.getQuantity()==0) {
-            cartDetails.setQuantity(1);
-        }
-        if(cartDetails.getColor() == null){
-            cartDetails.setColor("#000000");
-        }
-        if(cartDetails.getSize() == null){
-            cartDetails.setColor("M");
-        }
-        if(cartDetails.getShippingCharges() == 0){
-            cartDetails.setShippingCharges(100);
-        }
-
         List<CartDetails> cartDetailsList = cart.getCartDetails();
-        cartDetailsList.add(cartDetails);
+        ProductDTO product = productService.getProduct(cartDetails.getProductId()).getBody();
+        int cartDetailsIndex = findCartDetailsIndex(cartDetails.getProductId(), cartDetailsList);
+        if(cartDetailsIndex<cartDetailsList.size()){
+            CartDetails cartDetails1 = cartDetailsList.get(cartDetailsIndex);
+            cartDetails1.setQuantity(cartDetails1.getQuantity()+cartDetails.getQuantity());
+            cart.setTotalAmount(cart.getTotalAmount()+ (product != null ? product.getPrice() : 0)*cartDetails.getQuantity());
+            cartDetailsList.remove(cartDetailsIndex);
+            cartDetailsList.add(cartDetails1);
+        }else {
+
+            double totalAmount = cart.getTotalAmount();
+            totalAmount += (cartDetails.getQuantity() * Objects.requireNonNull(product).getPrice());
+
+            cart.setTotalAmount(totalAmount);
+            if (cartDetails.getQuantity() == 0) {
+                cartDetails.setQuantity(1);
+            }
+            if (cartDetails.getColor() == null) {
+                cartDetails.setColor("#000000");
+            }
+            if (cartDetails.getSize() == null) {
+                cartDetails.setColor("M");
+            }
+            if (cartDetails.getShippingCharges() == 0) {
+                cartDetails.setShippingCharges(100);
+            }
+
+            CartDetails cartDetails1 = CartDetails.builder().productId(cartDetails.getProductId()).color(cartDetails.getColor()).size(cartDetails.getSize()).quantity(cartDetails.getQuantity()).shippingCharges(cartDetails.getShippingCharges()).build();
+            cartDetailsList.add(cartDetails1);
+        }
         cart.setCartDetails(cartDetailsList);
 
         cartDao.save(cart);
@@ -129,8 +137,8 @@ public class CartServiceImpl {
      */
     public Optional<Cart> getAllCart(User user) {
         int userId = user.getCart().getUserCartId();
-        Cart cart = cartDao.findById(userId).get();
-        return Optional.of(cart);
+        Cart cart = cartDao.findById(userId).orElse(null);
+        return Optional.of(Objects.requireNonNull(cart));
     }
 
     /**
@@ -140,11 +148,11 @@ public class CartServiceImpl {
      */
     public List<CartItems> getAllCartDetails(User user) {
         int cartId = user.getCart().getUserCartId();
-        Cart cart = cartDao.findById(cartId).get();
+        Cart cart = cartDao.findById(cartId).orElse(null);
         List<CartItems> cartItemsList = new ArrayList<>();
-        for (CartDetails cartDetails : cart.getCartDetails()) {
+        for (CartDetails cartDetails : Objects.requireNonNull(cart).getCartDetails()) {
             ProductDTO product = productService.getProduct(cartDetails.getProductId()).getBody();
-            cartItemsList.add(convertToCartItems(cartDetails,product));
+            cartItemsList.add(convertToCartItems(cartDetails, Objects.requireNonNull(product)));
         }
         return cartItemsList;
     }
@@ -157,12 +165,12 @@ public class CartServiceImpl {
      */
     public CartItems getCartDetailsById(User user, UUID productId) {
         int cartId = user.getCart().getUserCartId();
-        Cart cart = cartDao.findById(cartId).get();
-        List<CartDetails> cartDetailsList = cart.getCartDetails();
+        Cart cart = cartDao.findById(cartId).orElse(null);
+        List<CartDetails> cartDetailsList = Objects.requireNonNull(cart).getCartDetails();
         int cartDetailsIndex = findCartDetailsIndex(productId, cartDetailsList);
         CartDetails cartDetails = cartDetailsList.get(cartDetailsIndex);
         ProductDTO product = productService.getProduct(cartDetails.getProductId()).getBody();
-        return convertToCartItems(cartDetails,product);
+        return convertToCartItems(cartDetails, Objects.requireNonNull(product));
     }
 
     /**
@@ -174,14 +182,14 @@ public class CartServiceImpl {
     public CartItems updateCartDetails(User user, CartDetails cartDetails) {
 
         int id = user.getCart().getUserCartId();
-        Cart cart = cartDao.findById(id).get();
+        Cart cart = cartDao.findById(id).orElse(null);
         UUID productId = cartDetails.getProductId();
         ProductDTO product = productService.getProduct(productId).getBody();
-        List<CartDetails> cartDetailsList = cart.getCartDetails();
+        List<CartDetails> cartDetailsList = Objects.requireNonNull(cart).getCartDetails();
         int cartDetailsIndex = findCartDetailsIndex(productId, cartDetailsList);
 
         CartDetails cartDetails1 = cart.getCartDetails().get(cartDetailsIndex);
-        cart.setTotalAmount(cart.getTotalAmount() - (product.getPrice() * cartDetails1.getQuantity()));
+        cart.setTotalAmount(cart.getTotalAmount() - (Objects.requireNonNull(product).getPrice() * cartDetails1.getQuantity()));
         cartDetails1.setProductId(cartDetails.getProductId());
         cartDetails1.setQuantity(cartDetails.getQuantity());
         cart.setTotalAmount(cart.getTotalAmount() + (product.getPrice() * cartDetails1.getQuantity()));
@@ -200,13 +208,13 @@ public class CartServiceImpl {
     public List<CartItems> deleteCartDetailsById(User user, UUID productId) {
 
         int cartId = user.getCart().getUserCartId();
-        Cart cart = cartDao.findById(cartId).get();
-        List<CartDetails> cartDetailsList = cart.getCartDetails();
+        Cart cart = cartDao.findById(cartId).orElse(null);
+        List<CartDetails> cartDetailsList = Objects.requireNonNull(cart).getCartDetails();
         ProductDTO product = productService.getProduct(productId).getBody();
         int cartDetailsIndex = findCartDetailsIndex(productId, cartDetailsList);
         CartDetails cartDetails = cart.getCartDetails().get(cartDetailsIndex);
         int cartDetailsId = cartDetails.getId();
-        cart.setTotalAmount(cart.getTotalAmount() - (product.getPrice() * cartDetails.getQuantity()));
+        cart.setTotalAmount(cart.getTotalAmount() - (Objects.requireNonNull(product).getPrice() * cartDetails.getQuantity()));
         cart.getCartDetails().remove(cartDetailsIndex);
         cart.setCartDetails(cartDetailsList);
         Cart newCart = cartDao.save(cart);
@@ -214,7 +222,7 @@ public class CartServiceImpl {
         List<CartItems> cartItemsList = new ArrayList<>();
         for(CartDetails details:newCart.getCartDetails()){
             ProductDTO productDTO = productService.getProduct(details.getProductId()).getBody();
-            cartItemsList.add(convertToCartItems(details,productDTO));
+            cartItemsList.add(convertToCartItems(details, Objects.requireNonNull(productDTO)));
         }
         return cartItemsList;
     }
@@ -227,17 +235,9 @@ public class CartServiceImpl {
     public String deleteAllCartDetails(User user) {
 
         int cartId = user.getCart().getUserCartId();
-        Cart cart = cartDao.findById(cartId).get();
-        List<CartDetails> cartDetailsList = cart.getCartDetails();
-        List<Integer> cartDetailsIdList = new ArrayList<>();
-        for(int i=0;i<cartDetailsIdList.size();i++){
-            cartDetailsIdList.add(cartDetailsList.get(i).getId());
-        }
-        cart.getCartDetails().clear();
-        for(int i=0;i<cartDetailsIdList.size();i++){
-            System.out.println(cartDetailsIdList.get(i));
-            cartDetailDao.deleteById(cartDetailsIdList.get(i));
-        }
+        Cart cart = cartDao.findById(cartId).orElse(null);
+
+        Objects.requireNonNull(cart).getCartDetails().clear();
         cart.setTotalAmount(0);
         cartDao.save(cart);
         return "Cart is clear";

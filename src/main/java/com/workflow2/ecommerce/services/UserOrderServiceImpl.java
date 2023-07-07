@@ -1,25 +1,16 @@
 package com.workflow2.ecommerce.services;
-
-import com.razorpay.Order;
-import com.razorpay.RazorpayClient;
-import com.razorpay.RazorpayException;
 import com.workflow2.ecommerce.dto.AllOrderDto;
 import com.workflow2.ecommerce.dto.CartItems;
 import com.workflow2.ecommerce.dto.OrderDto;
 import com.workflow2.ecommerce.dto.ProductDTO;
 import com.workflow2.ecommerce.entity.*;
 import com.workflow2.ecommerce.repository.*;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class contains business logic for all user orders
@@ -79,7 +70,7 @@ public class UserOrderServiceImpl{
      * @param address it is the address of that user
      * @return It returns a success message
      */
-    public String placeOrder(User user, double totalAmount, String address, String orderId) throws Exception {
+    public String placeOrder(User user, double totalAmount, String address, String orderId) {
         List<CartItems> cartDetailsList =  cartService.getAllCartDetails(user);
 
         if(cartDetailsList.isEmpty()){
@@ -91,12 +82,12 @@ public class UserOrderServiceImpl{
         for(CartItems cartItems:cartDetailsList){
             Product product=productDao.getReferenceById(cartItems.getProductId());
             if(product.getTotalStock() <= 0){
-            throw new NullPointerException();
+                return "Sorry, Product is Out of stock!";
             }
             else if(product.getTotalStock()>=cartItems.getQuantity()){
-            product.setTotalStock(product.getTotalStock()-cartItems.getQuantity());
+                product.setTotalStock(product.getTotalStock()-cartItems.getQuantity());
             }else{
-                throw new Exception("Order quantity exceeds total stock! please decrease the quantity");
+                return ("Order quantity exceeds total stock! please decrease the quantity");
             }
             productDao.save(product);
         
@@ -171,7 +162,7 @@ public class UserOrderServiceImpl{
                 allOrderDtoList.add(AllOrderDto.builder()
                         .orderId(userOrderCommon.getOrderId())
                         .trackingId(orderDetails.getTrackingId())
-                        .image(product.getImage())
+                        .image(Objects.requireNonNull(product).getImage())
                         .status(orderDetails.getStatus())
                         .orderedDate(orderDetails.getDate())
                         .deliveryDate(orderDetails.getDeliveryDate())
@@ -190,7 +181,7 @@ public class UserOrderServiceImpl{
      * @param user It is the user whose order we wanted to track
      * @param orderId It is the order id for a particular order, generated while placing order
      * @param trackingId It is the tracking id for a particular order, generated while placing order
-     * @return It return particular order whose order id and tracking id
+     * @return It returns particular order whose order id and tracking id
      */
     public OrderDto trackOrder(User user, String orderId,UUID trackingId)
     {
@@ -205,7 +196,7 @@ public class UserOrderServiceImpl{
                 .contactNo(user.getPhoneNo())
                 .email(user.getEmail())
                 .productId(userOrder.getProductId())
-                .productName(product.getName())
+                .productName(Objects.requireNonNull(product).getName())
                 .productImage(product.getImage())
                 .quantity(userOrder.getQuantity())
                 .orderTotal(product.getDiscountedPrice()+userOrder.getShippingCharges())
