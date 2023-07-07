@@ -87,7 +87,7 @@ class UserOrderControllerTest {
 
     @Test
     void placeOrder() throws Exception {
-        when(userOrderService.placeOrder(any(), anyDouble(), anyString())).thenReturn("Success order_Bj045362").thenReturn("There is no item in cart!!");
+        when(userOrderService.placeOrder(any(), anyDouble(), anyString(),anyString())).thenReturn("Success order_Bj045362").thenReturn("There is no item in cart!!");
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/placeorder/1000/address")
                 .header("Authorization", "Bearer " + JwtUtil.generateToken("testmail@gmail.com"));
@@ -98,7 +98,7 @@ class UserOrderControllerTest {
                 .andReturn();
 
         verify(cartService, times(1)).getUser(any());
-        verify(userOrderService, times(1)).placeOrder(any(), anyDouble(), anyString());
+        verify(userOrderService, times(1)).placeOrder(any(), anyDouble(), anyString(),anyString());
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
@@ -106,13 +106,13 @@ class UserOrderControllerTest {
                 .andReturn();
 
         verify(cartService, times(2)).getUser(any());
-        verify(userOrderService, times(2)).placeOrder(any(), anyDouble(), anyString());
+        verify(userOrderService, times(2)).placeOrder(any(), anyDouble(), anyString(),anyString());
     }
 
     @Test
     void viewOrders() throws Exception {
         List<AllOrderDto> allOrderList = new ArrayList<>();
-        AllOrderDto allOrders = AllOrderDto.builder().orderId("153efd9c-7577-466d-bbf6-0c15f9047319").status("Order Placed").orderedDate("2023-06-19").deliveryDate("2023-06-26")
+        AllOrderDto allOrders = AllOrderDto.builder().orderId("153efd9c-7577-466d-bbf6-0c15f9047319").status(1).orderedDate("2023-06-19").deliveryDate("2023-06-26")
                 .color("Olive").image(null).description("some Description").productName("product1").trackingId(UUID.fromString("f06f324d-8698-4865-98e0-b8531ca36410")).size("M").build();
         allOrderList.add(allOrders);
         when(userOrderService.viewAllOrders(any())).thenReturn(allOrderList);
@@ -132,7 +132,7 @@ class UserOrderControllerTest {
     @Test
     void trackOrder() throws Exception {
         OrderDto order = OrderDto.builder().orderId("153efd9c-7577-466d-bbf6-0c15f9047319").userName("Test User").email("testemail@gmail.com").contactNo("9876543210")
-                .quantity(1).deliveryAddress("17, brilliant center, Indore, MP, 452003").status("Order Placed").productId(UUID.fromString("0e3a8c84-7020-499a-b904-1669582b7e14"))
+                .quantity(1).deliveryAddress("17, brilliant center, Indore, MP, 452003").status(1).productId(UUID.fromString("0e3a8c84-7020-499a-b904-1669582b7e14"))
                 .productName("product1").productImage(null).discountedPrice(19124.24).shippingCharges(100.0).size("S").color("Olive").orderedDate("2023-06-19").deliveryDate("2023-06-26")
                 .orderTotal(19224.24).description("some description").build();
         when(userOrderService.trackOrder(any(), any(), any())).thenReturn(order);

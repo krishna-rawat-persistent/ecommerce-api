@@ -24,6 +24,6 @@ public class CouponController {
     public String saveCoupon(HttpServletRequest httpServletRequest, @RequestBody Coupon coupon)
     {
         User user = cartService.getUser(httpServletRequest);
-        couponService.saveCoupon(user,coupon);
+        return couponService.saveCoupon(user,coupon);
     }
 }

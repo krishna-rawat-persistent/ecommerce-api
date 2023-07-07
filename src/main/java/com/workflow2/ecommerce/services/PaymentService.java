@@ -20,7 +20,7 @@ public class PaymentService {
             return "Unable to make connection with Razorpay client";
         }
         JSONObject options = new JSONObject();
-        options.put("amount", Math.round(amount));
+        options.put("amount", Math.round(amount*100));
         options.put("currency", "INR");
         options.put("receipt", "txn_"+amount);
         Order order;

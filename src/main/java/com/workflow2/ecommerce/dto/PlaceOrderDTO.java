@@ -17,4 +17,5 @@ import lombok.NoArgsConstructor;
 public class PlaceOrderDTO {
     private double totalAmount;
     private String address;
+    private String orderId;
 }

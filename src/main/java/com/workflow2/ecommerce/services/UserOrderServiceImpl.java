@@ -75,7 +75,7 @@ public class UserOrderServiceImpl{
      * @param address it is the address of that user
      * @return It returns a success message
      */
-    public String placeOrder(User user, double totalAmount, String address) {
+    public String placeOrder(User user, double totalAmount, String address, String orderId) {
         List<CartItems> cartDetailsList =  cartService.getAllCartDetails(user);
 
         if(cartDetailsList.isEmpty()){
@@ -84,27 +84,10 @@ public class UserOrderServiceImpl{
         if(totalAmount==0){
             return "Total Amount should not be 0";
         }
-        RazorpayClient razorpayClient;
-        try {
-            razorpayClient = new RazorpayClient("rzp_test_DHE0D98Cg7lMgY", "XT1mCZyC4dd8r1cjkp11mM7o");
-        } catch (RazorpayException e) {
-            return "Unable to make connection with Razorpay client";
-        }
-
-        JSONObject options = new JSONObject();
-        options.put("amount", Math.round(totalAmount));
-        options.put("currency", "INR");
-        options.put("receipt", "txn_"+totalAmount);
-        Order order;
-        try {
-             order = razorpayClient.orders.create(options);
-        } catch (RazorpayException e) {
-            return "Unable to create order because of "+e.getMessage();
-        }
         List<OrderDetails> orderDetailsList = new ArrayList<>();
 
         UserOrderCommon userOrderCommon1 = new UserOrderCommon();
-        userOrderCommon1.setOrderId(order.get("id"));
+        userOrderCommon1.setOrderId(orderId);
         userOrderCommon1.setAddress(address);
         userOrderCommon1.setTotalAmount(totalAmount);
 
@@ -141,15 +124,15 @@ public class UserOrderServiceImpl{
         Cart cart = cartDao.findById(user.getCart().getUserCartId()).get();
         List<CartDetails> cartDetailsList1 = cart.getCartDetails();
         List<Integer> cartDetailsIdList = new ArrayList<>();
-        for(int i=0;i<cartDetailsList1.size();i++){
-            cartDetailsIdList.add(cartDetailsList1.get(i).getId());
+        for (CartDetails cartDetails : cartDetailsList1) {
+            cartDetailsIdList.add(cartDetails.getId());
         }
         cart.getCartDetails().clear();
-        for(int i=0;i<cartDetailsIdList.size();i++){
-            cartDetailDao.deleteById(cartDetailsIdList.get(i));
+        for (Integer integer : cartDetailsIdList) {
+            cartDetailDao.deleteById(integer);
         }
         cartDao.save(cart);
-        return "Success "+order.get("id").toString();
+        return "Success";
     }
 
     /**
